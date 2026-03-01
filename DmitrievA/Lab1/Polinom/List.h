@@ -1,5 +1,10 @@
 ﻿#pragma once
 
+template <typename T>
+class List;
+
+template <typename T>
+class Iterator;
 
 template <typename T>
 struct Node {
@@ -15,12 +20,13 @@ struct Node {
 
 template <typename T>
 class Iterator {
+	friend List<T>;
 	Node<T>* current;
 public:
 	Iterator(Node<T>* node) {
 		current = node;
 	}
-	T operator*() {
+	T& operator*() {
 		return current->data;
 	}
 	Iterator& operator++(int) {
@@ -37,7 +43,7 @@ public:
 		return current != other.current;
 	}
 	T* operator->() {
-		return &current->data;
+		return &(current->data);
 	}
 };
 
@@ -50,7 +56,7 @@ class List {
 	
 public:
 	typedef Iterator<T> iterator;
-	typedef Iterator<const T> const_iterator;
+	typedef Iterator<T> const_iterator;
 	List() {}
 	void push_back(T data) {
 		Node<T>* newNode = new Node<T>(data);
@@ -68,8 +74,8 @@ public:
 	void insert(iterator it, T data) {
 		Node<T>* newNode = new Node<T>(data);
 		if(it == iterator(first)) {
-			newNode->next = node;
-			node->prev = newNode;
+			newNode->next = first->next;
+			first->prev = newNode;
 			first = newNode;
 		}
 		else if(it == nullptr) {
@@ -78,10 +84,11 @@ public:
 			last = newNode;
 		}
 		else {
-			newNode->next = node;
-			newNode->prev = node->prev;
-			node->prev->next = newNode;
-			node->prev = newNode;
+			
+			newNode->next = it.current;
+			newNode->prev = it.current->prev;
+			it.current->prev->next = newNode;
+			it.current->prev = newNode;
 		}
 		size++;
 	}
@@ -118,6 +125,9 @@ public:
 		sort_(begin(), size);
 		
 	}
+	size_t getSize() const {
+		return size;
+	}
 private:
 	void sort_(iterator iter, size_t len) {
 		if (len == 1)
@@ -128,7 +138,7 @@ private:
 		sort_(middle_it, len - len / 2);
 		size_t m_ind = 0;
 		for (size_t i = 0; (i < len - 1) && (len / 2 + m_ind < len); i++) {
-			if (*middle_it < *iter) {
+			if (*middle_it > *iter) {
 				auto temp = *middle_it;
 				*middle_it = *iter;
 				*iter = temp;

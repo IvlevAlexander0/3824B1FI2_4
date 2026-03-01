@@ -12,7 +12,7 @@ int main()
 
     cout << "Choose input format of polinome:" << endl;
     cout << "1. First number N - count of monomes.Next N pairs of numbers - monomes.First number at pair - coefficient.Second - degree(must be between 0 and 999).Example:" << endl;
-    cout << "3\n2 111\n3 123\n10 0";
+    cout << "3\n2 111\n3 123\n10 0\n";
 	cout << "2. Human readable format. Example: x^2y^3z^4 + 2*xy4z - 5x - 10x2y3z4 + 1\n";
 	int mode;
 	cin >> mode;
@@ -20,6 +20,8 @@ int main()
         cout << "Invalid input. Please enter 1 or 2." << endl;
         cin >> mode;
 	}
+    cin.clear();
+    
 	Polinom polinom;
     polinom.parseMode = (mode == 1) ? Simple : Human;
 	cout << "Enter polinome:" << endl;

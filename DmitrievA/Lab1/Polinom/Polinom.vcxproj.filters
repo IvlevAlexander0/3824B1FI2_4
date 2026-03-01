@@ -15,7 +15,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Polinom.cpp">
+    <ClCompile Include="Main.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
+    <ClCompile Include="Polinome.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
