@@ -32,8 +32,9 @@ int main()
         cout << "Enter command:" << endl;
         cout << "1. Print polinome" << endl;
 		cout << "2. Add another polinome" << endl;
-        cout << "3. Multiply by another polinome" << endl;
-		cout << "4. Evaluate polinome" << endl;
+        cout << "3. Sub another polinome" << endl;
+        cout << "4. Multiply by another polinome" << endl;
+		cout << "5. Evaluate polinome" << endl;
         cout << "0. Exit" << endl;
         cin >> command;
         if (command == 1) {
@@ -47,8 +48,90 @@ int main()
             Polinom result = polinom + other;
             cout << "Result: " << result << endl;
         }
+        else if (command == 2) {
+            Polinom other;
+            other.parseMode = polinom.parseMode;
+            cout << "Enter another polinome to add:" << endl;
+            try {
+                cin >> other;
+            }
+            catch (const char* e) {
+                cout << "Input error: " << e << endl;
+                // clear failbit and skip to next loop
+                cin.clear();
+                continue;
+            }
+            try {
+                Polinom result = polinom + other;
+                cout << "Result: " << result << endl;
+            }
+            catch (const char* e) {
+                cout << "Operation error: " << e << endl;
+            }
+        }
+        else if (command == 3) {
+            Polinom other;
+            other.parseMode = polinom.parseMode;
+            cout << "Enter another polinome to subtract:" << endl;
+            try {
+                cin >> other;
+            }
+            catch (const char* e) {
+                cout << "Input error: " << e << endl;
+                cin.clear();
+                continue;
+            }
+            try {
+                Polinom result = polinom - other;
+                cout << "Result: " << result << endl;
+            }
+            catch (const char* e) {
+                cout << "Operation error: " << e << endl;
+            }
+        }
+        else if (command == 4) {
+            Polinom other;
+            other.parseMode = polinom.parseMode;
+            cout << "Enter another polinome to multiply:" << endl;
+            try {
+                cin >> other;
+            }
+            catch (const char* e) {
+                cout << "Input error: " << e << endl;
+                cin.clear();
+                continue;
+            }
+            try {
+                Polinom result = polinom * other;
+                cout << "Result: " << result << endl;
+            }
+            catch (const char* e) {
+                cout << "Operation error: " << e << endl;
+            }
+        }
+        else if (command == 5) {
+            double x = 0.0, y = 0.0, z = 0.0;
+            cout << "Enter values for x y z (separated by spaces): ";
+            if (!(cin >> x >> y >> z)) {
+                cout << "Invalid input for x, y, z. Aborting evaluation." << endl;
+                cin.clear();
+                // discard rest of line
+                std::string tmp; std::getline(cin, tmp);
+                continue;
+            }
+            try {
+                double value = polinom.evaluate(x, y, z);
+                cout << "Value: " << value << endl;
+            }
+            catch (const char* e) {
+                cout << "Evaluation error: " << e << endl;
+            }
+            catch (...) {
+                cout << "Unknown evaluation error." << endl;
+            }
+        }
         else if (command != 0) {
-            cout << "Invalid command. Please enter 0, 1 or 2." << endl;
+            cout << "Invalid command. Please enter 0, 1, 2, 3 or 4." << endl;
         }
 	}
     std::cout << "Hello World!\n";

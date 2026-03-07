@@ -4,6 +4,7 @@
 #include <string>
 #include "Polinom.h"
 #include <limits>
+#include <functional>
 
 using std::ostream;
 using std::endl;
@@ -11,6 +12,7 @@ using std::istream;
 using std::cout;
 using std::cin;
 using std::to_string;
+using std::greater;
 
 
 
@@ -67,7 +69,7 @@ Polinom Polinom::operator* (const Polinom& other) {
 			result.monomes.push_back(monome1 * monome2);
 		}
 	}
-	result.monomes.sort();
+	result.monomes.sort(greater<Monome>{});
 	for(List<Monome>::iterator it = result.monomes.begin(); it != result.monomes.end();) {
 		List<Monome>::iterator next = it;
 		next++;
@@ -87,6 +89,22 @@ Polinom Polinom::operator* (const Polinom& other) {
 	return result;
 }
 
+double Polinom::evaluate(double x, double y, double z) const {
+	double result = 0;
+	for (const auto& monome : this->monomes) {
+		double monome_value = monome.coeff;
+		int deg = monome.degree;
+		int deg_x = deg / 100;
+		int deg_y = deg % 100 / 10;
+		int deg_z = deg % 10;
+		monome_value *= pow(x, deg_x);
+		monome_value *= pow(y, deg_y);
+		monome_value *= pow(z, deg_z);
+		result += monome_value;
+	}
+	return result;
+}
+
 istream& operator >> (istream& in, Polinom& polinom) {
 	if (polinom.parseMode == Simple) {
 		int n;
@@ -100,7 +118,7 @@ istream& operator >> (istream& in, Polinom& polinom) {
 			cin >> monome;
 			polinom.monomes.push_back(monome);
 		}
-		polinom.monomes.sort();
+		polinom.monomes.sort(greater<Monome>{});
 		return in;
 	}
 	else {
@@ -191,7 +209,7 @@ istream& operator >> (istream& in, Polinom& polinom) {
 			}
 		}
 		polinom.monomes.push_back(Monome(sign* (1 > icoeff ? 1 : icoeff), ix * 100 + iy * 10 + iz));
-		polinom.monomes.sort();
+		polinom.monomes.sort(greater<Monome>{});
 	}
 		
 }
