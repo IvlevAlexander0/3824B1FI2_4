@@ -9,6 +9,7 @@ include(cmake/function.cmake)
 add_subdirectory(main)
 add_subdirectory(lib_list)
 add_subdirectory(lib_polynomial)
+add_subdirectory(lib_interface)
 
 
 option(BTEST "build test?" ON)

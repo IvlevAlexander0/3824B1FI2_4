@@ -17,7 +17,7 @@ public:
 	Polynomial operator - (const Polynomial&) const;
 	Polynomial operator * (double) const;
 	Polynomial operator * (const Polynomial&) const;
-
+	friend std::ostream& operator<<(std::ostream& os, const Polynomial& p);
 	void record();
 };
 

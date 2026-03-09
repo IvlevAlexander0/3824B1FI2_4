@@ -21,19 +21,12 @@ public:
 	~List();
 
 	bool is_empty();
-	int find_pos(const std::pair<double, int>&);
-	Node* find_node(const std::pair<double, int>&);
 	void pop_front();
 	void push_front(const std::pair<double, int>&) noexcept;
 	void pop_back();
 	void push_back(const std::pair<double, int>&) noexcept;
-	void erase(int);
-	void insert(int, const std::pair<double, int>&);
-	void erase(Node* A);
 	void insert(Node* A, const std::pair<double, int>&);
 	void clear() noexcept;
-	void sort() noexcept;
-
 	List& operator = (const List&);
 
 	class Iterator {

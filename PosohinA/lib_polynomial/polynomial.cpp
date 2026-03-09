@@ -1,5 +1,5 @@
 #include"../lib_polynomial/polynomial.h"
-
+#include <iomanip>
 
 int entering_degree(const char a) {
 	int deg;
@@ -34,11 +34,12 @@ Polynomial::~Polynomial() { view.clear(); }
 void Polynomial::record() {
 	std::cout <<"enter the monomials step by step. General view of the monome K * x^l1 * y^l2 * z^l3\nl1,l2,l3 - (0 - 9), k - the real coefficient" << "To stop typing, write K = 0" << std::endl;
 	int i = 1;
+	int sum_deg;
 	double rat;
 	int l1, l2, l3, degree;
 
 	while (true) {
-		std::cout << "Enter" << i++ << "monom" << std::endl;
+		std::cout << "Enter " << i++ << " monom" << std::endl;
 		std::cout << "Ratio K = \n";
 		std::cin >> rat;
 
@@ -48,34 +49,56 @@ void Polynomial::record() {
 		l1 = entering_degree('1');
 		l2 = entering_degree('2');
 		l3 = entering_degree('3');
+		sum_deg = l1 + l2 + l3;
 		degree = 100 * l1 + 10 * l2 + l3;
 
 		std::pair<double, int> monome = { rat, degree };
 
 		if (view.is_empty()) {
 			view.push_back(monome);
+			std::cout << "Monom recorded\n";
 			continue;
 		}
+		bool flage = false;
 
-		for (auto it = view.begin(); it != view.end(); it++) {
+		auto it = view.begin();
 
-			if (it.get_current()->_next == nullptr) {
-				view.push_back(monome);
-				break;
-			}
+		if (monome.second > (*it).second) {
+			view.push_front(monome);
+			flage = true;
+		}
 
-			else if (monome.second == (*it).second) {
-				(*it).first = (*it).first + monome.first;
-				break;
-			}
+		if (!flage) {
+			for (auto it = view.begin(); it != view.end(); ++it) {
+				Node* curr = it.get_current();
 
-			else if (monome.second > (*it).second && monome.second < it.get_current()->_val.second) {
-				view.insert(it.get_current(), monome);
-				break;
+				if (monome.second == curr->_val.second) {
+					curr->_val.first += monome.first;
+					flage = true;
+					break;
+				}
+
+				if (curr->_next == nullptr) {
+					view.push_back(monome);
+					flage = true;
+					break;
+				}
+				
+				else {
+					Node* nextcur = curr->_next;
+
+					if (monome.second > nextcur->_val.second &&
+						monome.second < curr->_val.second) {
+						// ¬ставл€ем после текущего (перед следующим)
+						view.insert(curr, monome);
+						flage = true;
+						break;
+					}
+				}
 			}
 		}
-		std::cout << "monom is recorded" << std::endl;
 	} 
+	std::cout << "your polynomial: " << (*this) << std::endl;
 }
 
 
@@ -84,7 +107,7 @@ Polynomial Polynomial::operator + (const Polynomial& A) const {
 	auto it1 = view.begin();
 	auto it2 = A.view.begin();
 
-	while (it1 != view.end() || it2 != view.end()){
+	while (it1 != view.end() && it2 != view.end()){
 		if ((*it1).second == (*it2).second) {
 			double sum = (*it1).first + (*it2).first;
 			if (sum != 0.0) {
@@ -136,14 +159,26 @@ Polynomial Polynomial::operator * (const Polynomial& A) const {
 	Polynomial new_Polynomial;
 	int deg;
 	auto it1 = view.begin();
-	auto it2 = A.view.begin();
 
 	for (it1; it1 != view.end(); it1++) {
-		for (it2; it2 != view.end(); it2++) {
+		for (auto it2 = A.view.begin(); it2 != view.end(); it2++) {
 			deg = (*it1).second + (*it2).second;
 
-			if (chek_deg(deg, (*it1).second) && chek_deg(deg, (*it2).second))
-				new_Polynomial.view.push_back(std::pair<double, int>(((*it1).first * (*it2).first), deg));
+			if (chek_deg(deg, (*it1).second) && chek_deg(deg, (*it2).second)) {
+				std::pair<double, int> new_pair = { ((*it1).first * (*it2).first), deg };
+		
+				bool found = true;
+				for (auto resIt = new_Polynomial.view.begin(); resIt != new_Polynomial.view.end(); ++resIt) {
+					if ((*resIt).second == new_pair.second) {
+						(*resIt).first += new_pair.first;
+						found = false;
+						break;
+					}
+				}
+
+				if (found)
+					new_Polynomial.view.push_back(new_pair);
+			}
 
 			else
 				throw std::logic_error("overflou");
@@ -154,4 +189,39 @@ Polynomial Polynomial::operator * (const Polynomial& A) const {
 
 const Polynomial operator * (double val, const Polynomial& A) {
 	return A * val;
+}
+
+std::ostream& operator<<(std::ostream& os, const Polynomial& p) {
+
+	
+	for (auto it = p.view.begin(); it != p.view.end(); ++it) {
+		if ((*it).first == 0.0) 
+			continue;
+
+		if ((*it).first > 0) 
+			os << " + ";
+
+		else 
+			os << " - ";
+		
+		if (std::abs((*it).first) != 1.0 || (*it).second == 0)
+			os << std::abs((*it).first);
+		
+		if ((*it).second > 0) {
+			int l1 = (*it).second / 100;
+			int l2 = ((*it).second / 10) % 10;
+			int l3 = (*it).second % 10;
+
+			if (l1 > 0) 
+				os << "x^" << l1;
+
+			if (l2 > 0)
+				os << " * y^" << l2;
+
+			if (l3 > 0)
+				os << " * z^" << l3;
+		}
+	}
+
+	return os;
 }
