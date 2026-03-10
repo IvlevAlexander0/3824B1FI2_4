@@ -17,7 +17,6 @@ public:
 	Polynomial sub()const;
 	Polynomial mul()const;
 	Polynomial sum2()const;
-	Polynomial sub2()const;
 	Polynomial mul2()const;
 };
 

@@ -17,9 +17,13 @@ public:
 	Polynomial operator - (const Polynomial&) const;
 	Polynomial operator * (double) const;
 	Polynomial operator * (const Polynomial&) const;
+	bool operator == (const Polynomial&) const;
 	friend std::ostream& operator<<(std::ostream& os, const Polynomial& p);
 	void record();
 };
 
 const Polynomial operator * (double, const Polynomial&) ;
+
+int entering_degree(const char);
+bool chek_deg(int, int);
 #endif // !POLYNOMIAL_POLYNOMIAL_H

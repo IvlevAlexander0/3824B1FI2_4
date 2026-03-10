@@ -4,8 +4,18 @@
 int entering_degree(const char a) {
 	int deg;
 	while (true) {
-		std::cout << "degree l" << a <<  " = ";
-		std::cin >> deg;
+		while (true) {
+			std::cout << "degree l" << a << " = ";
+			std::cin >> deg;
+
+			if (std::cin.fail()) {
+				std::cout << "Error: Invalid input!" << std::endl;
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			}
+			else
+				break;
+		}
 		if (0 <= deg && deg <= 9)
 			break;
 		else
@@ -39,10 +49,21 @@ void Polynomial::record() {
 	int l1, l2, l3, degree;
 
 	while (true) {
-		std::cout << "Enter " << i++ << " monom" << std::endl;
-		std::cout << "Ratio K = \n";
-		std::cin >> rat;
 
+		while (true) {
+			std::cout << "Enter " << i << " monom" << std::endl;
+			std::cout << "Ratio K = \n";
+			std::cin >> rat;
+
+			if (std::cin.fail()) {
+				std::cout << "Error: Invalid input!" << std::endl;
+				std::cin.clear();
+				std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+			}
+			else
+				break;
+		}
+		i++;
 		if (rat == 0)
 			break;
 
@@ -63,7 +84,7 @@ void Polynomial::record() {
 
 		auto it = view.begin();
 
-		if (monome.second > (*it).second) {
+		if (sum_numb(monome.second) > sum_numb((*it).second)) {
 			view.push_front(monome);
 			flage = true;
 		}
@@ -87,9 +108,7 @@ void Polynomial::record() {
 				else {
 					Node* nextcur = curr->_next;
 
-					if (monome.second > nextcur->_val.second &&
-						monome.second < curr->_val.second) {
-						// ¬ставл€ем после текущего (перед следующим)
+					if (sum_numb(monome.second) > sum_numb( nextcur->_val.second) && sum_numb(monome.second) < sum_numb(curr->_val.second)) {
 						view.insert(curr, monome);
 						flage = true;
 						break;
@@ -169,10 +188,27 @@ Polynomial Polynomial::operator * (const Polynomial& A) const {
 		
 				bool found = true;
 				for (auto resIt = new_Polynomial.view.begin(); resIt != new_Polynomial.view.end(); ++resIt) {
+					Node* curr = resIt.get_current();
 					if ((*resIt).second == new_pair.second) {
 						(*resIt).first += new_pair.first;
 						found = false;
 						break;
+					}
+					
+					else if (curr->_next == nullptr) {
+						new_Polynomial.view.push_back(new_pair);
+						found = false;
+						break;
+					}
+
+					else {
+						Node* nextcur = curr->_next;
+
+						if (sum_numb(new_pair.second) > sum_numb(nextcur->_val.second) && sum_numb(new_pair.second) < sum_numb(curr->_val.second)) {
+							new_Polynomial.view.insert(curr, new_pair);
+							found = false;
+							break;
+						}
 					}
 				}
 
@@ -192,8 +228,6 @@ const Polynomial operator * (double val, const Polynomial& A) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Polynomial& p) {
-
-	
 	for (auto it = p.view.begin(); it != p.view.end(); ++it) {
 		if ((*it).first == 0.0) 
 			continue;
@@ -222,6 +256,27 @@ std::ostream& operator<<(std::ostream& os, const Polynomial& p) {
 				os << " * z^" << l3;
 		}
 	}
-
 	return os;
+}
+
+bool Polynomial::operator == (const Polynomial& A) const {
+	bool flage = true;
+	auto it1 = view.begin();
+	auto it2 = A.view.begin();
+
+	while (it1 != view.end() && it2 != A.view.end()) {
+		if ((*it1) != (*it2)) {
+			flage = false;
+			break;
+		}
+		it1++;
+		it2++;
+	}
+	if (it1 != nullptr)
+		flage = false;
+
+	else if (it2 != nullptr)
+		flage = false;
+
+	return flage;
 }

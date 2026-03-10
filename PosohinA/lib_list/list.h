@@ -49,4 +49,6 @@ public:
 	Iterator end() const { return Iterator(); }
 	typedef Iterator iterator;
 };
+
+int sum_numb(int);
 #endif // !LIB_LIST_LIST_H

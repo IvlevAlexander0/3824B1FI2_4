@@ -20,10 +20,6 @@ Polynomial Interface::sum2() const {
 	return Pol2 + Pol1;
 }
 
-Polynomial Interface::sub2() const {
-	return Pol2 - Pol1;
-}
-
 Polynomial Interface::mul2() const {
 	return Pol2 * Pol1;
 }
@@ -69,22 +65,17 @@ void Interface::actions(){
 			flage = false;
 			break;
 
-		case 6:
-			rez = mul2();
-			flage = false;
-			break;
-
 		case 0:
-			std::cout << "Goodbye!\n";
+			std::cout << "\nGoodbye!";
 			return;
 		
 		default:
-			std::cout << "incorrect value";
+			std::cout << "\nincorrect value\n";
 		}
 		
 		std::cout << rez << std::endl;
 	
-		std::cout << "do you want to continue with the same polynomials?\n1 - yes\n2 - no\n3 - Exit\n";
+		std::cout << "\ndo you want to continue with the same polynomials?\n1 - yes\n2 - no\n3 - Exit\n";
 		std::cin >> a;
 
 		switch (a) {
@@ -102,7 +93,7 @@ void Interface::actions(){
 			break;
 
 		default:
-			std::cout << "incorrect value";
+			std::cout << "incorrect value\n";
 		}
 
 	}
