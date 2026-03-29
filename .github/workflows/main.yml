@@ -5,7 +5,7 @@ on:
     branches: [ main, master, develop ]
   pull_request:
     branches: [ "*" ]
-    types: [ opened, edited ]
+    types: [ opened, edited, synchronize ]
 
 permissions:
   contents: read
@@ -71,7 +71,7 @@ jobs:
         run: |
           ERROR_COUNT=0
           UNFORMATTED_FILES=""
-          PR_COMMENT=""
+          declare -A PR_COMMENT_MAP
           IFS=',' read -ra CHANGED_FILES <<< "${{ steps.changed-files.outputs.all_changed_files }}"
           for file in "${CHANGED_FILES[@]}"; do
             if [ ! -f "$file" ]; then
@@ -83,12 +83,20 @@ jobs:
               while IFS= read -r error_line; do
                 if echo "$error_line" | grep -q "code should be clang-formatted"; then
                   LINE_NUM=$(echo "$error_line" | grep -o ":[0-9]*:" | head -1 | tr -d ':')
-                  ORIG_LINE=$(sed -n "${LINE_NUM}p" "$file")
-                  FIX_LINE=$(clang-format "$file" | sed -n "${LINE_NUM}p")
-                  PR_COMMENT="$PR_COMMENT\n- **$file:$LINE_NUM**\n  \`\`\`diff\n- $ORIG_LINE\n+ $FIX_LINE\n  \`\`\`\n"
+                  key="$file:$LINE_NUM"
+                  if [[ -z "${PR_COMMENT_MAP[$key]}" ]]; then
+                    ORIG_LINE=$(sed -n "${LINE_NUM}p" "$file")
+                    FIX_LINE=$(clang-format "$file" | sed -n "${LINE_NUM}p")
+                    PR_COMMENT_MAP[$key]="\n- **$file:$LINE_NUM**\n  \`\`\`diff\n- $ORIG_LINE\n+ $FIX_LINE\n  \`\`\`\n"
+                  fi
                 fi
               done < clang_output.tmp
             fi
+          done
+          # Собираем уникальные записи в PR_COMMENT
+          PR_COMMENT=""
+          for entry in "${PR_COMMENT_MAP[@]}"; do
+            PR_COMMENT="$PR_COMMENT$entry"
           done
           echo "ERROR_COUNT=$ERROR_COUNT" >> $GITHUB_OUTPUT
           echo "UNFORMATTED_FILES<<EOF" >> $GITHUB_OUTPUT
