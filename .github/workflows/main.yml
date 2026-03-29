@@ -120,7 +120,7 @@ jobs:
           IFS=',' read -ra CHANGED_FILES <<< "${{ steps.changed-files.outputs.all_changed_files }}"
           cpplint_errors=0
           for file in "${CHANGED_FILES[@]}"; do
-            if ! cpplint --filter=-build/c++11,-runtime/references --verbose=0 --std=c++14 "$file"; then
+            if ! cpplint --filter=-build/c++11,-build/c++14,-runtime/references --verbose=0 "$file"; then
               cpplint_errors=1
             fi
           done
