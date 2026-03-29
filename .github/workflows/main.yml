@@ -85,8 +85,8 @@ jobs:
                   LINE_NUM=$(echo "$error_line" | grep -o ":[0-9]*:" | head -1 | tr -d ':')
                   key="$file:$LINE_NUM"
                   if [[ -z "${PR_COMMENT_MAP[$key]}" ]]; then
-                    ORIG_LINE=$(sed -n "${LINE_NUM}p" "$file" | sed 's/^[[:space:]]*//')
-                    FIX_LINE=$(clang-format "$file" | sed -n "${LINE_NUM}p" | sed 's/^[[:space:]]*//')
+                    ORIG_LINE=$(sed -n "${LINE_NUM}p" "$file")
+                    FIX_LINE=$(clang-format "$file" | sed -n "${LINE_NUM}p")
                     PR_COMMENT_MAP[$key]="- **$file:$LINE_NUM**\n\`\`\`diff\n- $ORIG_LINE\n+ $FIX_LINE\n\`\`\`"
                   fi
                 fi
