@@ -1,12 +1,14 @@
 name: pull_request_check
 
 on:
+  push:
+    branches: [ main, master, develop ]
   pull_request:
     branches: [ "*" ]
-    types: [opened, edited]
+    types: [ opened, edited ]
   pull_request_target:
     branches: [ "*" ]
-    types: [opened, edited]
+    types: [ opened, edited ]
 
 permissions:
   contents: read
@@ -23,4 +25,131 @@ jobs:
       - name: labeler
         uses: fuxingloh/multi-labeler@v4
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  code-style:
+    name: Formatting & Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+
+      - name: Check for skip label
+        id: skip
+        run: |
+          if [[ "${{ github.event.head_commit.message }}" =~ \[skip-format\] ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get changed files
+        id: changed-files
+        if: steps.skip.outputs.skip == 'false'
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **/*.cpp
+            **/*.h
+            **/*.hpp
+            **/*.c
+            **/*.cc
+            **/*.cxx
+          separator: ","
+
+      - name: Install tools
+        if: steps.skip.outputs.skip == 'false' && steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format python3-pip
+          pip3 install cpplint
+
+      - name: Run clang-format
+        id: clang-format
+        if: steps.skip.outputs.skip == 'false' && steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          ERROR_COUNT=0
+          UNFORMATTED_FILES=""
+          PR_COMMENT=""
+          IFS=',' read -ra CHANGED_FILES <<< "${{ steps.changed-files.outputs.all_changed_files }}"
+          for file in "${CHANGED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              continue
+            fi
+            if ! clang-format -n -Werror "$file" 2>clang_output.tmp; then
+              ERROR_COUNT=$((ERROR_COUNT + 1))
+              UNFORMATTED_FILES="$UNFORMATTED_FILES\n- $file"
+              while IFS= read -r error_line; do
+                if echo "$error_line" | grep -q "code should be clang-formatted"; then
+                  LINE_NUM=$(echo "$error_line" | grep -o ":[0-9]*:" | head -1 | tr -d ':')
+                  ORIG_LINE=$(sed -n "${LINE_NUM}p" "$file")
+                  FIX_LINE=$(clang-format "$file" | sed -n "${LINE_NUM}p")
+                  PR_COMMENT="$PR_COMMENT\n- **$file:$LINE_NUM**\n  \`\`\`diff\n- $ORIG_LINE\n+ $FIX_LINE\n  \`\`\`\n"
+                fi
+              done < clang_output.tmp
+            fi
+          done
+          echo "ERROR_COUNT=$ERROR_COUNT" >> $GITHUB_OUTPUT
+          echo "UNFORMATTED_FILES<<EOF" >> $GITHUB_OUTPUT
+          printf "%b\n" "$UNFORMATTED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "PR_COMMENT<<EOF" >> $GITHUB_OUTPUT
+          printf "%b\n" "$PR_COMMENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          if [ $ERROR_COUNT -gt 0 ]; then
+            exit 1
+          fi
+
+      - name: Run cpplint
+        if: steps.skip.outputs.skip == 'false' && steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          IFS=',' read -ra CHANGED_FILES <<< "${{ steps.changed-files.outputs.all_changed_files }}"
+          cpplint_errors=0
+          for file in "${CHANGED_FILES[@]}"; do
+            if ! cpplint --filter=-build/c++11,-runtime/references --verbose=0 --std=c++14 "$file"; then
+              cpplint_errors=1
+            fi
+          done
+          if [ $cpplint_errors -ne 0 ]; then
+            exit 1
+          fi
+
+      - name: Comment PR on formatting errors
+        if: github.event_name == 'pull_request' && failure() && steps.clang-format.outputs.PR_COMMENT != ''
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commentBody = `## Code formatting issues found
+
+            The following files need to be formatted with **clang-format**:
+
+            ${{ steps.clang-format.outputs.PR_COMMENT }}
+
+            `;
+            const maxLen = 65535;
+            const finalBody = commentBody.length > maxLen ? commentBody.slice(0, maxLen-100) + "\n\n... (truncated)" : commentBody;
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: finalBody
+            });
+
+      - name: Success comment on PR
+        if: github.event_name == 'pull_request' && success() && steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '**Code formatting check passed!** All changed files are properly formatted.'
+            });
+
+      - name: Skip message
+        if: steps.skip.outputs.skip == 'false' && steps.changed-files.outputs.any_changed == 'false'
+        run: echo "No C++ files changed – skipping formatting check."
