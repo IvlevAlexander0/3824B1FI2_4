@@ -1,3 +1,5 @@
+"Copyright [2026] <IvlevA>"
+
 #include <iostream>
 
 int main() {
