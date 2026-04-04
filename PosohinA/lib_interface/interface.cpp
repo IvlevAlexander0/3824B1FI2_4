@@ -20,8 +20,8 @@ Polynomial Interface::sum2() const {
 	return Pol2 + Pol1;
 }
 
-Polynomial Interface::mul2() const {
-	return Pol2 * Pol1;
+Polynomial Interface::sub2() const {
+	return Pol2 - Pol1;
 }
 
 void Interface::input_polyn() {
@@ -36,7 +36,7 @@ void Interface::actions(){
 	int a;
 	Polynomial rez;
 	while (flage) {
-		std::cout << "What to do with polynomials?\n1 - Pol1 + Pol2\n2 - Pol1 - Pol2\n3 - Pol1 * Pol2\n4 - Pol2 + Pol1\n5 - Pol2 - Pol1\n6 - Pol2 * Pol1\n0 - Exit\nEnter the number indicating the action: ";
+		std::cout << "What to do with polynomials?\n1 - Pol1 + Pol2\n2 - Pol1 - Pol2\n3 - Pol1 * Pol2\n4 - Pol2 + Pol1\n5 - Pol2 - Pol1\n0 - Exit\nEnter the number indicating the action: ";
 		std::cin >> a;
 
 		switch (a) {

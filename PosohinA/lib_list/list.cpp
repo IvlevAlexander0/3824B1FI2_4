@@ -56,7 +56,6 @@ int sum_numb(int a) {
 }
 
 
-
 List::List() : _head(nullptr), _tail(nullptr), count(0) {}
 
 
