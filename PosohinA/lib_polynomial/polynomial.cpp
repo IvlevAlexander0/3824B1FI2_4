@@ -183,7 +183,7 @@ Polynomial Polynomial::operator * (const Polynomial& A) const {
 		for (auto it2 = A.view.begin(); it2 != view.end(); it2++) {
 			deg = (*it1).second + (*it2).second;
 
-			if (chek_deg(deg, (*it1).second) && chek_deg(deg, (*it2).second)) {
+			if (chek_deg(deg, (*it1).second) || chek_deg(deg, (*it2).second)) {
 				std::pair<double, int> new_pair = { ((*it1).first * (*it2).first), deg };
 		
 				bool found = true;

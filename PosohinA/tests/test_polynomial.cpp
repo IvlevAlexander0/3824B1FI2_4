@@ -22,71 +22,112 @@ TEST(Test_Polynomial, test_record) {
 }
 
 TEST(Test_Polynomial, test_summ) {
-	Polynomial A, C, D;
-	List B;
-	A.record(); // нужно вводить такие цифры 4 2 0 0	-9 2 3 7	 6 0 0 3	
-	C.record(); // нужно вводить такие цифры 3 2 0 0	-3 2 0 0	 5 1 6 0		-6 1 0 2
+	Polynomial D;
+	List B, A, C;
+	A.push_back(std::pair<double, int>{-9, 237});
+	A.push_back(std::pair<double, int>{6, 3});
+	A.push_back(std::pair<double, int>{4, 200});
+
+
+	C.push_back(std::pair<double, int>{5, 160});
+	C.push_back(std::pair<double, int>{-6, 102}); 
+	
 	B.push_back(std::pair<double, int>{-9, 237});
 	B.push_back(std::pair<double, int>{5, 160});
 	B.push_back(std::pair<double, int>{-6, 102});
 	B.push_back(std::pair<double, int>{6, 003});
 	B.push_back(std::pair<double, int>{4, 200});
-	D = A + C;
+
+	Polynomial A1(A), C1(C);
+	D = A1 + C1;
 	Polynomial D1(B);
 	EXPECT_EQ(D, D1);
 }
 
 TEST(Test_Polynomial, test_sub) {
-	Polynomial A, C, D;
-	List B;
-	A.record(); // нужно вводить такие цифры 4 2 0 0	-9 2 3 7	 6 0 0 3	
-	C.record(); // нужно вводить такие цифры 3 2 0 0	-3 2 0 0	 5 1 6 0		-6 1 0 2
+	Polynomial D;
+	List B, A, C;
+	A.push_back(std::pair<double, int>{-9, 237});
+	A.push_back(std::pair<double, int>{6, 3});
+	A.push_back(std::pair<double, int>{4, 200});
+
+
+	C.push_back(std::pair<double, int>{5, 160});
+	C.push_back(std::pair<double, int>{-6, 102});
+
 	B.push_back(std::pair<double, int>{-9, 237});
 	B.push_back(std::pair<double, int>{-5, 160});
 	B.push_back(std::pair<double, int>{+6, 102});
 	B.push_back(std::pair<double, int>{6, 003});
 	B.push_back(std::pair<double, int>{4, 200});
-	D = A - C;
+
+	Polynomial A1(A), C1(C);
+	D = A1 - C1;
 	Polynomial D1(B);
 	EXPECT_EQ(D, D1);
 }
 
 TEST(Test_Polynomial, test_mul_const) {
-	Polynomial A, D;
-	List B;
-	A.record(); // нужно вводить такие цифры 4 2 0 0	-9 2 3 7	 6 0 0 3	
+	Polynomial D;
+	List B, A;
+	A.push_back(std::pair<double, int>{-9, 237});
+	A.push_back(std::pair<double, int>{6, 3});
+	A.push_back(std::pair<double, int>{4, 200});
+
 	B.push_back(std::pair<double, int>{27, 237});
 	B.push_back(std::pair<double, int>{-18, 003});
 	B.push_back(std::pair<double, int>{-12, 200});
-	D = (-3) * A;
+	Polynomial A1(A);
+
+	D = (-3) * A1;
 	Polynomial D1(B);
 	EXPECT_EQ(D, D1);
 }
 
 TEST(Test_Polynomial, test_mul) {
-	Polynomial A, C, D;
-	List B;
-	A.record(); // нужно вводить такие цифры 4 2 0 0	-9 2 3 5	 6 0 0 3	
-	C.record(); // нужно вводить такие цифры 3 2 0 0	-3 2 0 0	 5 1 4 0		-6 1 0 2
+	Polynomial D;
+	List B, A, C;
+	A.push_back(std::pair<double, int>{-9, 235});
+	A.push_back(std::pair<double, int>{6, 3});
+	A.push_back(std::pair<double, int>{4, 200});
+
+	C.push_back(std::pair<double, int>{5, 140});
+	C.push_back(std::pair<double, int>{-6, 102});
+
 	B.push_back(std::pair<double, int>{-45, 375});
 	B.push_back(std::pair<double, int>{54, 337});
 	B.push_back(std::pair<double, int>{+30, 143});
 	B.push_back(std::pair<double, int>{20, 340});
 	B.push_back(std::pair<double, int>{-36, 105});
 	B.push_back(std::pair<double, int>{-24, 302});
-	D = A * C;
+
+	Polynomial A1(A), C1(C);
+	D = A1 * C1;
 	Polynomial D1(B);
 	EXPECT_EQ(D, D1);
 }
 
 TEST(Test_Polynomial, test_rav) {
-	Polynomial A, C;
-	List B;
-	A.record(); // нужно вводить такие цифры 4 2 0 0	-9 2 3 7	 6 0 0 3	
+	Polynomial C;
+	List B, A;
+	A.push_back(std::pair<double, int>{-9, 237});
+	A.push_back(std::pair<double, int>{6, 3});
+	A.push_back(std::pair<double, int>{4, 200});
+
 	B.push_back(std::pair<double, int>{-9, 237});
 	B.push_back(std::pair<double, int>{6, 003});
 	B.push_back(std::pair<double, int>{4, 200});
+
+	Polynomial A1(A);
 	C = A;
 	Polynomial D(B);
 	EXPECT_EQ(D, C);
+}
+
+TEST(Test_Polynomial, test_overflou) {
+	List A, C;
+	A.push_back(std::pair<double, int>{-9, 235});
+	C.push_back(std::pair<double, int>{-6, 107});
+	Polynomial A1(A), C1(C);
+	ASSERT_ANY_THROW(A1 * C1);
 }
