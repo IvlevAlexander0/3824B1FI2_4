@@ -22,6 +22,61 @@ private:
 	Node<T>* head; //указывает на первый элемент списка 
 	size_t size;
 public:
+
+	class Iterator {
+	private:
+		Node<T>* current;
+	public:
+
+		Iterator(Node<T>* ptr = nullptr) : current(ptr) {}
+
+		T& operator*() {
+			if (current == nullptr) {
+				throw std::runtime_error("The iterator is equal to nullptr. Cannot access data");
+			}
+
+			return current->data;
+		}
+
+		Iterator& operator++() {
+			if (current != nullptr) {
+				current = current->pNext;
+			}
+			return *this;
+		}
+
+		Iterator operator++(int) {
+			Iterator it(this->current);
+			++(*this);
+			return it;
+		}
+
+		bool operator !=(const Iterator& other) const {
+			return this->current != other.current;
+		}
+
+		bool operator ==(const Iterator& other) const { //не используется при реализации класса Polinom
+			//return this->current == other.current;
+			return this->current == other.current;
+		}
+
+		Iterator& operator+=(size_t n) { //не используется при реализации класса Polinom 
+			while (n > 0 && current != nullptr) {
+				current = current->pNext;
+				--n;
+			}
+			return *this;
+		}
+	};
+
+	Iterator begin() const {
+		return Iterator(head);
+	}
+
+	Iterator end() const {
+		return Iterator(nullptr);
+	}
+
 	F_List() : size(0), head(nullptr) {};
 
 	F_List(const F_List& other) {
@@ -73,7 +128,7 @@ public:
 		if (size == 0) {
 			throw std::out_of_range("Error.The size is zero");
 		}
-		else if (index >= this->size || index < 0) {
+		else if (index >= this->size) {
 			throw std::out_of_range("Error. Incorrect index");
 		}
 
@@ -93,7 +148,7 @@ public:
 		if (size == 0) {
 			throw std::out_of_range("Error.The size is zero");
 		}
-		else if (index >= this->size || index < 0) {
+		else if (index >= this->size) {
 			throw std::out_of_range("Error. Incorrect index");
 		}
 
@@ -158,6 +213,34 @@ public:
 			current->pNext = new_node;
 			++size;
 		}
+	}
+
+	void remove(const size_t& index) {
+
+		if (size == 0) {
+			throw std::out_of_range("Error.The size is zero");
+		}
+		else if (index >= this->size) {
+			throw std::out_of_range("Error. Incorrect index (\"remove element\")");
+		}
+
+		Node<T>* toDelete = nullptr;
+		if (index == 0) {
+			toDelete = head;
+			head = head->pNext;
+		}
+		else {
+			Node<T>* previous = head;
+			for (size_t i = 0; i < index - 1; ++i) {
+				previous = previous->pNext;
+			}
+
+			toDelete = previous->pNext;
+			previous->pNext = toDelete->pNext;
+		}
+
+		delete toDelete;
+		--size;
 	}
 
 };
@@ -288,16 +371,24 @@ public:
 
 				bool flag_add = 0;
 
-				for (size_t i = 0; i < this->list.get_size(); ++i) {
-					if (degree > list[i].degree) {
-						list.insert(mon, i);
+				F_List<monom>::Iterator it = this->list.begin();
+
+				size_t index = 0;
+
+				for (F_List<monom>::Iterator it = this->list.begin(); it != this->list.end(); ++it, ++index) {
+					if (degree > (*it).degree) {
+						list.insert(mon, index);
 						flag_add = 1;
 						break;
-
 					}
-					else if (degree == list[i].degree) {
-						double new_coeff = list[i].coeff + coeff;
-						list[i].coeff = new_coeff;
+					else if (degree == (*it).degree) {
+						double new_coeff = (*it).coeff + coeff;
+						if (new_coeff == 0) {
+							list.remove(index);
+						}
+						else {
+							(*it).coeff = new_coeff;
+						}
 						flag_add = 1;
 						break;
 					}
@@ -320,46 +411,52 @@ public:
 
 	Polinom operator + (const Polinom& other) {
 		Polinom result;
-		int ind_this = this->list.get_size() - 1;
-		int ind_other = other.list.get_size() - 1;
+		Polinom temp;
 
-		while (ind_this >= 0 && ind_other >= 0) {
+		F_List<monom>::Iterator it1 = this->list.begin();
+		F_List<monom>::Iterator it2 = other.list.begin();
 
-			unsigned int this_degr = this->list[ind_this].degree;
-			unsigned int other_degr = other.list[ind_other].degree;
+		while (it1 != this->list.end() && it2 != other.list.end()) {
+			unsigned int this_degr = (*it1).degree;
+			unsigned int other_degr = (*it2).degree;
 
-			double this_coeff = this->list[ind_this].coeff;
-			double other_coeff = other.list[ind_other].coeff;
-
+			double this_coeff = (*it1).coeff;
+			double other_coeff = (*it2).coeff;
 			if (this_degr == other_degr) {
 				double sum_coeff = this_coeff + other_coeff;
 				if (sum_coeff != 0) {
 
-					result.push_front_monom(sum_coeff, this_degr);
+					temp.push_front_monom(sum_coeff, this_degr);
 				}
-				--ind_this;
-				--ind_other;
+				++it1;
+				++it2;
 			}
 			else if (this_degr > other_degr) {
 
-				result.push_front_monom(other_coeff, other_degr);
-				--ind_other;
+				temp.push_front_monom(this_coeff, this_degr);
+				++it1;
+
 			}
 			else {
+				temp.push_front_monom(other_coeff, other_degr);
+				++it2;
 
-				result.push_front_monom(this_coeff, this_degr);
-				--ind_this;
 			}
-		}
-		while (ind_this >= 0) {
 
-			result.push_front_monom(this->list[ind_this].coeff, this->list[ind_this].degree);
-			--ind_this;
 		}
 
-		while (ind_other >= 0) {
-			result.push_front_monom(other.list[ind_other].coeff, other.list[ind_other].degree);
-			--ind_other;
+		while (it1 != list.end()) {
+			temp.push_front_monom((*it1).coeff, (*it1).degree);
+			++it1;
+		}
+
+		while (it2 != other.list.end()) {
+			temp.push_front_monom((*it2).coeff, (*it2).degree);
+			++it2;
+		}
+
+		for (F_List<monom>::Iterator it = temp.list.begin(); it != temp.list.end(); ++it) {
+			result.push_front_monom((*it).coeff, (*it).degree);
 		}
 		return result;
 	}
@@ -378,11 +475,17 @@ public:
 		Polinom pol;
 
 		if (value != 0) {
-			for (int i = this->list.get_size() - 1; i >= 0; --i) {
-				double new_coeff = this->list[i].coeff * value;
-				unsigned int deg = this->list[i].degree;
+			Polinom pol_temp;
 
-				pol.push_front_monom(new_coeff, deg);
+
+			for (F_List<monom>::Iterator it = this->list.begin(); it != list.end(); ++it) {
+				double new_coeff = (*it).coeff * value;
+				unsigned int deg = (*it).degree;
+				pol_temp.push_front_monom(new_coeff, deg);
+			}
+
+			for (F_List<monom>::Iterator it = pol_temp.list.begin(); it != pol_temp.list.end(); ++it) {
+				pol.push_front_monom((*it).coeff, (*it).degree);
 			}
 		}
 
@@ -396,13 +499,13 @@ public:
 			std::vector<unsigned int> result_degr;
 			std::vector<double> result_coeff;
 
-			for (size_t i = 0; i < this->list.get_size(); ++i) {
-				unsigned int this_deg = this->list[i].degree;
-				double this_coeff = this->list[i].coeff;
+			for (F_List<monom>::Iterator it1 = this->list.begin(); it1 != this->list.end(); ++it1) {
+				unsigned int this_deg = (*it1).degree;
+				double this_coeff = (*it1).coeff;
 
-				for (size_t j = 0; j < other.list.get_size(); ++j) {
-					unsigned int other_deg = other.list[j].degree;
-					double other_coeff = other.list[j].coeff;
+				for (F_List<monom>::Iterator it2 = other.list.begin(); it2 != other.list.end(); ++it2) {
+					unsigned int other_deg = (*it2).degree;
+					double other_coeff = (*it2).coeff;
 
 					double new_coeff = this_coeff * other_coeff;
 
@@ -411,30 +514,21 @@ public:
 						throw std::runtime_error("The degree of any variable in each monomial must not exceed 9");
 					}
 
-					if (i == 0 && j == 0) {
-						result_degr.push_back(new_degree);
+					bool found = 0;
+
+					for (size_t n = 0; n < result_degr.size(); ++n) {
+						if (result_degr[n] == new_degree) {
+							new_coeff = new_coeff + result_coeff[n];
+							result_coeff[n] = new_coeff;
+							found = 1;
+							break;
+						}
+					}
+
+					if (!found) {
 						result_coeff.push_back(new_coeff);
+						result_degr.push_back(new_degree);
 					}
-					else {
-
-						bool found = 0;
-
-						for (size_t n = 0; n < result_degr.size(); ++n) {
-							if (result_degr[n] == new_degree) {
-								new_coeff = new_coeff + result_coeff[n];
-								result_coeff[n] = new_coeff;
-								found = 1;
-								break;
-							}
-						}
-
-						if (!found) {
-							result_coeff.push_back(new_coeff);
-							result_degr.push_back(new_degree);
-						}
-
-					}
-
 				}
 			}
 
@@ -450,24 +544,25 @@ public:
 	friend std::ostream& operator<<(std::ostream& out, const Polinom& pol) {
 
 		char variables[] = { 'x','y','z' };
-		for (size_t i = 0; i < pol.list.get_size(); ++i) {
+		size_t i = 0;
+		for (F_List<monom>::Iterator it = pol.list.begin(); it != pol.list.end(); ++it, ++i) {
 			if (i != 0) {
-				if (pol.list[i].coeff > 0) {
+				if ((*it).coeff > 0) {
 					out << " + ";
 				}
 				else {
 					out << " - ";
 				}
 			}
-			else if (i == 0 && pol.list[i].coeff < 0) {
+			else if (i == 0 && (*it).coeff < 0) {
 				out << "-";
 			}
 
-			if (pol.list[i].coeff != 1 && pol.list[i].coeff != -1) {
-				out << fabs(pol.list[i].coeff);
+			if ((*it).coeff != 1 && (*it).coeff != -1) {
+				out << fabs((*it).coeff);
 			}
 
-			unsigned int deg = pol.list[i].degree;
+			unsigned int deg = (*it).degree;
 
 			if (deg != 0) {
 				int count = 0;
@@ -575,8 +670,30 @@ public:
 		return istr;
 	}
 
-	size_t count_monom() {
+	size_t count_monom() const {
 		return this->list.get_size();
+	}
+
+	bool operator == (const Polinom& other) const {
+
+		if (this->count_monom() != other.count_monom()) {
+			return false;
+		}
+
+		F_List<monom>::Iterator it1 = this->list.begin();
+		F_List<monom>::Iterator it2 = other.list.begin();
+
+		for (; it1 != this->list.end(); ++it1, ++it2) {
+			if (((*it1).coeff != (*it2).coeff) || ((*it1).degree != (*it2).degree)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	bool operator != (const Polinom& other) const {
+		return !(*this == other);
 	}
 
 };

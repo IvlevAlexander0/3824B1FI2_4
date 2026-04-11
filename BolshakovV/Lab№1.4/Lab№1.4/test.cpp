@@ -99,8 +99,93 @@ TEST(test_forward_list, test_insert) {
 	EXPECT_THROW({ list.insert(245,-1); }, std::out_of_range);
 	EXPECT_THROW({ list.insert(12,5); }, std::out_of_range);
 }
+////////
+TEST(test_forward_list, test_remove) {
+	F_List<int> list;
+	list.push_back(1);
+	list.push_back(2);
+	list.push_back(3);
+	list.push_back(4);
+	list.push_back(5);
+	EXPECT_EQ(list[2], 3);
 
+	list.remove(2); //удалить 3
+	EXPECT_EQ(list[2], 4);
+	EXPECT_EQ(list.get_size(), 4);
+}
 
+TEST(test_forward_list, test_remove1) {
+	F_List<int> list;
+	EXPECT_THROW({ list.remove(0); }, std::out_of_range);
+
+	list.push_back(1);
+	list.push_back(2);
+	list.push_back(3);
+	list.push_back(4);
+	list.push_back(5);
+	EXPECT_EQ(list[2], 3);
+
+	list.remove(0);
+	EXPECT_EQ(list[0], 2);
+	EXPECT_EQ(list.get_size(), 4);
+
+	EXPECT_THROW({ list.remove(5); }, std::out_of_range);
+}
+////////
+TEST(test_forward_list, test_iterator) {
+	F_List<int> list;
+	list.push_back(1);
+	list.push_back(2);
+	list.push_back(3);
+	list.push_back(4);
+	list.push_back(5);
+
+	F_List<int>::Iterator it = list.begin();
+	EXPECT_EQ(*it, 1);
+	*it = 213;
+	EXPECT_EQ(*it, 213);
+	EXPECT_EQ(list[0], 213);
+
+	++it;
+	EXPECT_EQ(*it, 2);
+
+	it += 2;
+	EXPECT_EQ(*it, 4);
+
+	it++;
+	EXPECT_EQ(*it, 5);
+}
+
+TEST(test_forward_list, test_iterator1) {
+
+	F_List<int>::Iterator it;
+	EXPECT_THROW({ int m = *it; }, std::runtime_error);
+
+	++it;
+	EXPECT_THROW({ int m = *it; }, std::runtime_error);
+
+	it += 2;
+	EXPECT_THROW({ int m = *it; }, std::runtime_error);
+
+	it++;
+	EXPECT_THROW({ int m = *it; }, std::runtime_error);
+}
+
+TEST(test_forward_list, test_iterator2) {
+	F_List<int> list;
+	list.push_back(1);
+	list.push_back(2);
+	list.push_back(3);
+
+	F_List<int>::Iterator it1 = list.begin();
+	F_List<int>::Iterator it2 = list.begin();
+
+	EXPECT_TRUE(it1 == it2);
+
+	++it2;
+	EXPECT_TRUE(it1 != it2);
+}
+////////
 void check_correct(Polinom& pol, std::string& polinom) {
 	std::ostringstream out;
 	out << pol;
@@ -192,6 +277,17 @@ TEST(test_polinom0, test_add_monom4) {
 	std::string polinom = "-3x7y8z9 + 45.67x1y0z0 + 6x0y9z9 + 34x0y1z1";
 	check_correct(pol, polinom);
 }
+TEST(test_polinom0, test_add_monom5) {
+	Polinom pol1;
+	pol1.add_monom(2, 124);
+	pol1.add_monom(3, 567);
+	pol1.add_monom(-3, 567);
+
+	std::string polinom1 = "2x1y2z4";
+	check_correct(pol1, polinom1);
+	EXPECT_EQ(pol1.count_monom(), 1);
+}
+
 /////////////////
 TEST(test_polinom0, test_costructor_copy) {
 	std::vector<double> coeff = { 1,23,45.67 };
@@ -488,4 +584,28 @@ TEST(test_polinom2, test_input3) {
 	std::string polinom2 = "5x1y3z4";
 	check_correct(pol1, polinom1);
 	check_correct(pol2, polinom2);
+}
+TEST(test_polinom3, test_operator_comparison) {
+	Polinom pol1;
+	pol1.add_monom(2, 124);
+	pol1.add_monom(3, 567);
+
+	Polinom pol2;
+	pol2.add_monom(2, 124);
+	pol2.add_monom(3, 567);
+
+	EXPECT_TRUE(pol1 == pol2);
+
+	Polinom pol3;
+	pol3.add_monom(1, 124);
+	pol3.add_monom(3, 567);
+
+	EXPECT_TRUE(pol1 != pol3);
+}
+
+TEST(test_polinom3, test_operator_comparison1) {
+	Polinom pol1;
+	Polinom pol2;
+
+	EXPECT_TRUE(pol1 == pol2);
 }
