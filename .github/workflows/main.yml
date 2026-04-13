@@ -143,36 +143,26 @@ jobs:
 
       - name: Comment PR on errors
         if: github.event_name == 'pull_request_target' && (steps.clang-format.outputs.CLANG_FORMAT_FAILED == 'true' || steps.cpplint.outputs.CPPLINT_FAILED == 'true')
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const fs = require('fs');
-            
-            let body = `Code style issues found\n\n`;
-
-            if (fs.existsSync('clang_comment.txt')) {
-              const clangComment = fs.readFileSync('clang_comment.txt', 'utf8').trim();
-              if (clangComment) {
-                body += `Formatting errors (clang-format):\n\n${clangComment}\n\n`;
-              }
-            }
-
-            if (fs.existsSync('cpplint_errors.txt')) {
-              const cpplintErrors = fs.readFileSync('cpplint_errors.txt', 'utf8').trim();
-              if (cpplintErrors) {
-                body += `Linting errors (cpplint):\n\n${cpplintErrors}\n\n`;
-              }
-            }
-            
-            const maxLen = 65535;
-            const finalBody = body.length > maxLen ? body.slice(0, maxLen-100) + "\n\n... (truncated)" : body;
-            
-            await github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: finalBody
-            });
+        run: |
+          {
+            echo "Code style issues found"
+            echo
+            if [ -s clang_comment.txt ]; then
+              echo "### Formatting errors (clang-format)"
+              echo
+              cat clang_comment.txt
+              echo
+            fi
+            if [ -s cpplint_errors.txt ]; then
+              echo "### Linting errors (cpplint)"
+              echo
+              cat cpplint_errors.txt
+            fi
+          } > comment_body.txt
+          head -c 65535 comment_body.txt > comment_body_trunc.txt
+          gh pr comment ${{ github.event.pull_request.number }} --body-file comment_body_trunc.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
 
       - name: Fail if any linter failed
         if: steps.clang-format.outputs.CLANG_FORMAT_FAILED == 'true' || steps.cpplint.outputs.CPPLINT_FAILED == 'true'
