@@ -1,3 +1,4 @@
+// Copyright 2026 Nikita
 #include "MainTable.h"
 #include "Polynom.h"
 
