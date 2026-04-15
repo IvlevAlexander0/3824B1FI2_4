@@ -5,6 +5,7 @@
 #include <iostream>
 #include <limits>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include "BaseTable.h"
@@ -13,7 +14,7 @@ struct Monom {
   double coeff;
   size_t deg;
 
-  Monom(double coefficient = 0.0, size_t degree = 0)
+  explicit Monom(double coefficient = 0.0, size_t degree = 0)
       : coeff{coefficient}, deg{degree} {}
 };
 
@@ -21,7 +22,7 @@ struct Node {
   Monom data;
   Node *next;
 
-  Node(const Monom &data_, Node *next_ = nullptr) : data{data_}, next{next_} {}
+  explicit Node(const Monom &data_, Node *next_ = nullptr) : data{data_}, next{next_} {}
 };
 
 class Forward_list_with_f_head {
@@ -38,7 +39,7 @@ class Forward_list_with_f_head {
 
   friend class Polynomial;
 
-public:
+ public:
   Forward_list_with_f_head();
 
   Forward_list_with_f_head(const Forward_list_with_f_head &other_list);
@@ -62,10 +63,10 @@ public:
 class Polynomial {
   Forward_list_with_f_head polynom;
 
-public:
+ public:
   Polynomial();
 
-  Polynomial(const std::vector<std::pair<double, size_t>> &source);
+  explicit Polynomial(const std::vector<std::pair<double, size_t>> &source);
 
   Polynomial(const Polynomial &other_polynom);
 

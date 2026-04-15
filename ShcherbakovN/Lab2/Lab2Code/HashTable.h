@@ -1,10 +1,14 @@
 // Copyright 2026 Nikita
 #pragma once
+
+#include <string>
+#include <vector>
+
 #include "BaseTable.h"
 
 template <typename TKey, typename TValue>
 class HashTable : public BaseTable<TKey, TValue> {
-private:
+ private:
   using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
   struct NodeHash {
@@ -107,8 +111,8 @@ private:
     sizeTable = newSizeTable;
   }
 
-public:
-  HashTable(size_t sizeTable_ = 10, double loadFactor_ = 0.75) {
+ public:
+  explicit HashTable(size_t sizeTable_ = 10, double loadFactor_ = 0.75) {
     if (loadFactor_ < 0 || std::fabs(loadFactor_) < EPSILON) {
       loadFactor_ = 0.75;
     }
@@ -181,7 +185,7 @@ public:
     elementsCount++;
 
     opCount += 2;
-    if ((double)elementsCount > loadFactor * (double)sizeTable) {
+    if (static_cast<double>(elementsCount) > loadFactor * static_cast<double>(sizeTable)) {
       rehash(opCount);
     }
 

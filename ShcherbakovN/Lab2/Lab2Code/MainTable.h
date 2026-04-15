@@ -1,11 +1,16 @@
 // Copyright 2026 Nikita
 #pragma once
+
+#include <iostream>
+#include <string>
+#include <vector>
+
 #include "AVLTable.h"
 #include "HashTable.h"
 #include "UnorderedTable.h"
 
 class LoggingOperations {
-private:
+ private:
   struct InputLogs {
     std::string tableName;
     std::string operationName;
@@ -22,7 +27,7 @@ private:
   size_t totalAVLOp;
   size_t totalHashOp;
 
-public:
+ public:
   LoggingOperations() {
     totalInsert = 0;
     totalFind = 0;
@@ -113,7 +118,7 @@ public:
 };
 
 template <typename TKey, typename TValue> class MainTable {
-private:
+ private:
   using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
   UnorderedTable<TKey, TValue> unorderedTable;
@@ -122,7 +127,7 @@ private:
 
   LoggingOperations logger;
 
-public:
+ public:
   MainTable() {}
 
   ~MainTable() {}

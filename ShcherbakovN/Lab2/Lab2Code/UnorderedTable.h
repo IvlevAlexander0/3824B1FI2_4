@@ -1,10 +1,14 @@
 // Copyright 2026 Nikita
 #pragma once
+
+#include <string>
+#include <vector>
+
 #include "BaseTable.h"
 
 template <typename TKey, typename TValue>
 class UnorderedTable : public BaseTable<TKey, TValue> {
-private:
+ private:
   using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
   struct TTableRecord {
@@ -14,7 +18,7 @@ private:
 
   std::vector<TTableRecord> records;
 
-public:
+ public:
   UnorderedTable() {}
 
   ~UnorderedTable() {}

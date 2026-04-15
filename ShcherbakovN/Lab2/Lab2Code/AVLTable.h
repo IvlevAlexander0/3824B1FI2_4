@@ -1,10 +1,13 @@
 // Copyright 2026 Nikita
 #pragma once
+
+#include <string>
+
 #include "BaseTable.h"
 
 template <typename TKey, typename TValue>
 class AVLTable : public BaseTable<TKey, TValue> {
-private:
+ private:
   using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
   struct Node {
@@ -279,7 +282,7 @@ private:
     delete node_;
   }
 
-public:
+ public:
   AVLTable() : root(nullptr), NodeCount(0) {}
 
   void clear() override {

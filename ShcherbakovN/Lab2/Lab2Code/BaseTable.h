@@ -12,7 +12,7 @@
 const double EPSILON = 1e-9;
 
 template <typename TKey, typename TValue> class BaseTable {
-public:
+ public:
   struct FindResult {
     TValue *value;
     size_t operationsCount;
