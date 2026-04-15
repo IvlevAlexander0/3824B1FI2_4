@@ -1,7 +1,9 @@
 // Copyright 2026 Nikita
+
 #include <iostream>
 #include <string>
 #include <vector>
+
 #include "MainTable.h"
 #include "Polynom.h"
 

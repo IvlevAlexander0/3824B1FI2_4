@@ -22,7 +22,8 @@ struct Node {
   Monom data;
   Node *next;
 
-  explicit Node(const Monom &data_, Node *next_ = nullptr) : data{data_}, next{next_} {}
+  explicit Node(const Monom &data_, Node *next_ = nullptr)
+      : data{data_}, next{next_} {}
 };
 
 class Forward_list_with_f_head {

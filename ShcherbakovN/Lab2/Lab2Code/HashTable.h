@@ -184,8 +184,11 @@ class HashTable : public BaseTable<TKey, TValue> {
     opCount++;
     elementsCount++;
 
+    double count = static_cast<double>(elementsCount);
+    double sizeT = static_cast<double>(sizeTable);
+
     opCount += 2;
-    if (static_cast<double>(elementsCount) > loadFactor * static_cast<double>(sizeTable)) {
+    if (count > loadFactor * sizeT) {
       rehash(opCount);
     }
 

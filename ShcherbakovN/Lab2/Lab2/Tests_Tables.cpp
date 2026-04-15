@@ -1,7 +1,9 @@
 // Copyright 2026 Nikita
-#include "../Lab2/pch.h"
+
 #include <string>
 #include <vector>
+
+#include "../Lab2/pch.h"
 #include "../Lab2Code/MainTable.h"
 #include "../Lab2Code/Polynom.h"
 
