@@ -2,26 +2,22 @@
 #pragma once
 
 #include <cmath>
-#include <fstream> // Библиотека для чтения и записи из файла.
+#include <fstream>
 #include <iostream>
 #include <limits>
-#include <stdexcept> // Библиотека для исключений.
+#include <stdexcept>
 #include <string>
 #include <vector>
 
-const double EPSILON = 1e-9; // Малое значение для сравнения с нулём.
+const double EPSILON = 1e-9;
 
 template <typename TKey, typename TValue>
-class BaseTable // Базовый класс (абстрактный) для всех таблиц. Содержит чисто
-                // виртуальные методы для таблиц. Виртуальные методы возвращают
-                // количество произведённых операций при выполнении
-                // соответствующего действия.
+class BaseTable
 {
 public:
-  struct FindResult // Структура для удобного возвращения значения и количества
-                    // операций при выполнении find().
+  struct FindResult
   {
-    TValue *value; // Равен nullptr, если запись не найдена.
+    TValue *value;
     size_t operationsCount;
 
     FindResult() : value(nullptr), operationsCount(0) {}
@@ -29,17 +25,14 @@ public:
 
   virtual size_t
   insert(const TKey &key,
-         const TValue &value) = 0; // Вставка записи в таблицу (ключ-значение).
+         const TValue &value) = 0;
   virtual FindResult
-  find(const TKey &key) = 0; // Поиск записи по ключу. Возвращает указатель на
-                             // значение записи и количество произведённых
-                             // операций при выполнении поиска.
-  virtual size_t remove(const TKey &key) = 0; // Удаление записи по ключу.
+  find(const TKey &key) = 0;
+  virtual size_t remove(const TKey &key) = 0;
 
   virtual std::string
-  getTableName() const = 0; // Метод для получения имени (типа) таблицы. Нужно
-                            // для логирования.
-  virtual void clear() = 0; // Метод для очистки таблицы от всех записей.
+  getTableName() const = 0;
+  virtual void clear() = 0;
   virtual size_t
-  size() const = 0; // Метод для получения количества записей в таблице.
+  size() const = 0;
 };
