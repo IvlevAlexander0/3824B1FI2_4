@@ -19,10 +19,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseTable.h" />
     <ClInclude Include="AVLTable.h" />
     <ClInclude Include="HashTable.h" />
     <ClInclude Include="MainTable.h" />
-    <ClInclude Include="BaseTable.h" />
     <ClInclude Include="Polynom.h" />
     <ClInclude Include="UnorderedTable.h" />
   </ItemGroup>

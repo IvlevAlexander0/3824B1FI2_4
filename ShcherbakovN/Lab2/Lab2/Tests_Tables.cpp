@@ -2,201 +2,191 @@
 #include "../Lab2Code/MainTable.h"
 #include "../Lab2Code/Polynom.h"
 
-//Tests Forward_list_with_f_head:
+// Tests Forward_list_with_f_head:
 
-TEST(Test_Forward_list_with_f_head, CreateDefaultEmptyListIsCorrectNoThrow)
-{
-    EXPECT_NO_THROW
-    ({
-        Forward_list_with_f_head list;
-        EXPECT_TRUE(list.is_empty());
-        });
-}
-
-TEST(Test_Forward_list_with_f_head, PushQuickIsCorrectNoThrow)
-{
+TEST(Test_Forward_list_with_f_head, CreateDefaultEmptyListIsCorrectNoThrow) {
+  EXPECT_NO_THROW({
     Forward_list_with_f_head list;
-    std::vector<std::pair<double, size_t>> data;
-
-    EXPECT_NO_THROW
-    ({
-        for (size_t i = 1; i < 999; ++i)
-        {
-            list.push_quick(10.0, i);
-            data = list.get_list();
-            EXPECT_EQ(data[0].second, i);
-            EXPECT_DOUBLE_EQ(data[0].first, 10.0);
-        }
-        EXPECT_FALSE(list.is_empty());
-
-        list.push_quick(76.89, 0);
-        data = list.get_list();
-        EXPECT_EQ(data[998].second, 0);
-        EXPECT_DOUBLE_EQ(data[998].first, 76.89);
-        EXPECT_FALSE(list.is_empty());
-
-        list.push_quick(-45.8, 999);
-        data = list.get_list();
-        EXPECT_EQ(data[0].second, 999);
-        EXPECT_DOUBLE_EQ(data[0].first, -45.8);
-        EXPECT_FALSE(list.is_empty());
-
-        EXPECT_EQ(data.size(), 1000);
-        });
+    EXPECT_TRUE(list.is_empty());
+  });
 }
 
-TEST(Test_Forward_list_with_f_head, CreateListByCopyingIsCorrectNoThrow)
-{
-    std::vector<std::pair<double, size_t>> data1, data2;
-    EXPECT_NO_THROW
-    ({
-        Forward_list_with_f_head list1;
-        EXPECT_TRUE(list1.is_empty());
-        list1.push_quick(34.0, 111);
-        list1.push_quick(-8.0, 654);
-        EXPECT_FALSE(list1.is_empty());
+TEST(Test_Forward_list_with_f_head, PushQuickIsCorrectNoThrow) {
+  Forward_list_with_f_head list;
+  std::vector<std::pair<double, size_t>> data;
 
-        Forward_list_with_f_head list2(list1);
-        EXPECT_FALSE(list2.is_empty());
+  EXPECT_NO_THROW({
+    for (size_t i = 1; i < 999; ++i) {
+      list.push_quick(10.0, i);
+      data = list.get_list();
+      EXPECT_EQ(data[0].second, i);
+      EXPECT_DOUBLE_EQ(data[0].first, 10.0);
+    }
+    EXPECT_FALSE(list.is_empty());
 
-        data1 = list1.get_list();
-        data2 = list2.get_list();
-        EXPECT_EQ(data1[0].second, data2[0].second);
-        EXPECT_EQ(data1[1].second, data2[1].second);
-        EXPECT_EQ(data1[0].first, data2[0].first);
-        EXPECT_EQ(data1[1].first, data2[1].first);
+    list.push_quick(76.89, 0);
+    data = list.get_list();
+    EXPECT_EQ(data[998].second, 0);
+    EXPECT_DOUBLE_EQ(data[998].first, 76.89);
+    EXPECT_FALSE(list.is_empty());
 
-        list2.clear();
-        EXPECT_TRUE(list2.is_empty());
-        });
+    list.push_quick(-45.8, 999);
+    data = list.get_list();
+    EXPECT_EQ(data[0].second, 999);
+    EXPECT_DOUBLE_EQ(data[0].first, -45.8);
+    EXPECT_FALSE(list.is_empty());
+
+    EXPECT_EQ(data.size(), 1000);
+  });
 }
 
-TEST(Test_Forward_list_with_f_head, PushFrontAnyThrow)
-{
-    Forward_list_with_f_head list;
+TEST(Test_Forward_list_with_f_head, CreateListByCopyingIsCorrectNoThrow) {
+  std::vector<std::pair<double, size_t>> data1, data2;
+  EXPECT_NO_THROW({
+    Forward_list_with_f_head list1;
+    EXPECT_TRUE(list1.is_empty());
+    list1.push_quick(34.0, 111);
+    list1.push_quick(-8.0, 654);
+    EXPECT_FALSE(list1.is_empty());
 
-    EXPECT_THROW(list.push_quick(0.0, 333), std::invalid_argument);
+    Forward_list_with_f_head list2(list1);
+    EXPECT_FALSE(list2.is_empty());
 
-    EXPECT_THROW(list.push_quick(76.89, -1), std::range_error); // -1 преобразуется в большое число, так как size_t.
+    data1 = list1.get_list();
+    data2 = list2.get_list();
+    EXPECT_EQ(data1[0].second, data2[0].second);
+    EXPECT_EQ(data1[1].second, data2[1].second);
+    EXPECT_EQ(data1[0].first, data2[0].first);
+    EXPECT_EQ(data1[1].first, data2[1].first);
 
-    EXPECT_THROW(list.push_quick(-45.8, 1000), std::range_error);
-
+    list2.clear();
+    EXPECT_TRUE(list2.is_empty());
+  });
 }
 
-TEST(Test_Forward_list_with_f_head, AssignmentIsCorrectNoThrow)
-{
-    Forward_list_with_f_head list1, list2;
-    std::vector<std::pair<double, size_t>> data1, data2;
+TEST(Test_Forward_list_with_f_head, PushFrontAnyThrow) {
+  Forward_list_with_f_head list;
 
-    EXPECT_NO_THROW
-    ({
-        list1.push_quick(23.1, 123);
-        EXPECT_FALSE(list1.is_empty());
-        EXPECT_TRUE(list2.is_empty());
+  EXPECT_THROW(list.push_quick(0.0, 333), std::invalid_argument);
 
-        list2 = list1;
-        EXPECT_FALSE(list1.is_empty());
-        EXPECT_FALSE(list2.is_empty());
+  EXPECT_THROW(
+      list.push_quick(76.89, -1),
+      std::range_error); // -1 преобразуется в большое число, так как size_t.
 
-        data1 = list1.get_list();
-        data2 = list2.get_list();
-        EXPECT_EQ(data1[0].second, data2[0].second);
-        EXPECT_EQ(data1[0].first, data2[0].first);
-        });
+  EXPECT_THROW(list.push_quick(-45.8, 1000), std::range_error);
+}
+
+TEST(Test_Forward_list_with_f_head, AssignmentIsCorrectNoThrow) {
+  Forward_list_with_f_head list1, list2;
+  std::vector<std::pair<double, size_t>> data1, data2;
+
+  EXPECT_NO_THROW({
+    list1.push_quick(23.1, 123);
+    EXPECT_FALSE(list1.is_empty());
+    EXPECT_TRUE(list2.is_empty());
+
+    list2 = list1;
+    EXPECT_FALSE(list1.is_empty());
+    EXPECT_FALSE(list2.is_empty());
+
+    data1 = list1.get_list();
+    data2 = list2.get_list();
+    EXPECT_EQ(data1[0].second, data2[0].second);
+    EXPECT_EQ(data1[0].first, data2[0].first);
+  });
 }
 
 // Tests Polynomial:
 
-TEST(Test_Polynomial, CreateDefaultEmptyPolynomIsCorrectNoThrow)
-{
-    EXPECT_NO_THROW
-    ({
-        Polynomial p;
-        EXPECT_TRUE(p.is_empty());
-        });
+TEST(Test_Polynomial, CreateDefaultEmptyPolynomIsCorrectNoThrow) {
+  EXPECT_NO_THROW({
+    Polynomial p;
+    EXPECT_TRUE(p.is_empty());
+  });
 }
 
-TEST(Test_Polynomial, CreateNotEmptyPolynomIsCorrectNoThrow)
-{
-    std::vector<std::pair<double, size_t>> source1 = { { 1.0, 111 }, { 0.0, 245 }, { 15.0, 645 } }; // Моном с коэффциентом 0 игнорируется.
-    std::vector<std::pair<double, size_t>> data1, data2;
-    EXPECT_NO_THROW
-    ({
-        Polynomial p1(source1); // 15x^6y^4z^5 + 1x^1y^1z^1.
-        EXPECT_FALSE(p1.is_empty());
-        data1 = p1.get_polynom();
-        EXPECT_EQ(data1[0].second, 645);
-        EXPECT_EQ(data1[1].second, 111);
-        EXPECT_EQ(data1[0].first, 15.0);
-        EXPECT_EQ(data1[1].first, 1.0);
-        //p1.print_polynom();
-
-        Polynomial p2(p1); // 15x^6y^4z^5 + 1x^1y^1z^1.
-        EXPECT_FALSE(p2.is_empty());
-        data2 = p2.get_polynom();
-        EXPECT_EQ(data2[0].second, data1[0].second);
-        EXPECT_EQ(data2[1].second, data1[1].second);
-        EXPECT_EQ(data2[0].first, data1[0].first);
-        EXPECT_EQ(data2[1].first, data1[1].first);
-        //p2.print_polynom();
-        });
-}
-
-TEST(Test_Polynomial, CreateNotEmptyPolynomIsCorrectAnyThrow)
-{
-    std::vector<std::pair<double, size_t>> source1 = { { 1.0, -1 } }; // Степень монома меньше 0 не допустима.
-    EXPECT_THROW(Polynomial p1(source1), std::range_error);
-
-    std::vector<std::pair<double, size_t>> source2 = { { 1.0, 1000 } }; // Степень монома больше 999 не допустима.
-    EXPECT_THROW(Polynomial p2(source2), std::range_error);
-}
-
-TEST(Test_Polynomial, AssignmentIsCorrectNoThrow)
-{
-    std::vector<std::pair<double, size_t>> source1 = { { 1.0, 100 }, { 2.0, 10 }, { 3.0, 1 } };
-    std::vector<std::pair<double, size_t>> data1, data2;
-    EXPECT_NO_THROW
-    ({
-        Polynomial p1(source1); // 1x^1 + 2y^1 + 3z^1.
-        EXPECT_FALSE(p1.is_empty());
-        data1 = p1.get_polynom();
-        //p1.print_polynom();
-
-        Polynomial p2;
-        p2 = p1; // 1x^1 + 2y^1 + 3z^1.
-        EXPECT_FALSE(p2.is_empty());
-        data2 = p2.get_polynom();
-        EXPECT_EQ(data2[0].second, data1[0].second);
-        EXPECT_EQ(data2[1].second, data1[1].second);
-        EXPECT_EQ(data2[2].second, data1[2].second);
-        EXPECT_EQ(data2[0].first, data1[0].first);
-        EXPECT_EQ(data2[1].first, data1[1].first);
-        EXPECT_EQ(data2[2].first, data1[2].first);
-        //p2.print_polynom();
-        });
-}
-
-TEST(Test_Polynomial, PolynomAdditionAndSubtractionIsCorrectNoThrow)
-{
-    std::vector<std::pair<double, size_t>> source1 = { { 2.0, 200 }, { 3.0, 110 }, { 1.0, 1 } };
-
-    std::vector<std::pair<double, size_t>> source2 = { { 1.0, 200 }, { -3.0, 110 }, { 4.0, 0 } };
-
-    Polynomial p1(source1); // 2x^2 + 3x^1y^1 + 1z^1.
-    //p1.print_polynom();
-    Polynomial p2(source2); // 1x^2 - 3x^1y^1 + 4.
-    //p2.print_polynom();
-
-    std::vector<std::pair<double, size_t>> data1, data2;
+TEST(Test_Polynomial, CreateNotEmptyPolynomIsCorrectNoThrow) {
+  std::vector<std::pair<double, size_t>> source1 = {
+      {1.0, 111},
+      {0.0, 245},
+      {15.0, 645}}; // Моном с коэффциентом 0 игнорируется.
+  std::vector<std::pair<double, size_t>> data1, data2;
+  EXPECT_NO_THROW({
+    Polynomial p1(source1); // 15x^6y^4z^5 + 1x^1y^1z^1.
+    EXPECT_FALSE(p1.is_empty());
     data1 = p1.get_polynom();
-    data2 = p2.get_polynom();
+    EXPECT_EQ(data1[0].second, 645);
+    EXPECT_EQ(data1[1].second, 111);
+    EXPECT_EQ(data1[0].first, 15.0);
+    EXPECT_EQ(data1[1].first, 1.0);
+    // p1.print_polynom();
 
-    EXPECT_NO_THROW
-    ({
-        Polynomial add_p_1 = p1 + p2; // 3x^2 + 1z^1 +  4.
-    //add_p_1.print_polynom();
+    Polynomial p2(p1); // 15x^6y^4z^5 + 1x^1y^1z^1.
+    EXPECT_FALSE(p2.is_empty());
+    data2 = p2.get_polynom();
+    EXPECT_EQ(data2[0].second, data1[0].second);
+    EXPECT_EQ(data2[1].second, data1[1].second);
+    EXPECT_EQ(data2[0].first, data1[0].first);
+    EXPECT_EQ(data2[1].first, data1[1].first);
+    // p2.print_polynom();
+  });
+}
+
+TEST(Test_Polynomial, CreateNotEmptyPolynomIsCorrectAnyThrow) {
+  std::vector<std::pair<double, size_t>> source1 = {
+      {1.0, -1}}; // Степень монома меньше 0 не допустима.
+  EXPECT_THROW(Polynomial p1(source1), std::range_error);
+
+  std::vector<std::pair<double, size_t>> source2 = {
+      {1.0, 1000}}; // Степень монома больше 999 не допустима.
+  EXPECT_THROW(Polynomial p2(source2), std::range_error);
+}
+
+TEST(Test_Polynomial, AssignmentIsCorrectNoThrow) {
+  std::vector<std::pair<double, size_t>> source1 = {
+      {1.0, 100}, {2.0, 10}, {3.0, 1}};
+  std::vector<std::pair<double, size_t>> data1, data2;
+  EXPECT_NO_THROW({
+    Polynomial p1(source1); // 1x^1 + 2y^1 + 3z^1.
+    EXPECT_FALSE(p1.is_empty());
+    data1 = p1.get_polynom();
+    // p1.print_polynom();
+
+    Polynomial p2;
+    p2 = p1; // 1x^1 + 2y^1 + 3z^1.
+    EXPECT_FALSE(p2.is_empty());
+    data2 = p2.get_polynom();
+    EXPECT_EQ(data2[0].second, data1[0].second);
+    EXPECT_EQ(data2[1].second, data1[1].second);
+    EXPECT_EQ(data2[2].second, data1[2].second);
+    EXPECT_EQ(data2[0].first, data1[0].first);
+    EXPECT_EQ(data2[1].first, data1[1].first);
+    EXPECT_EQ(data2[2].first, data1[2].first);
+    // p2.print_polynom();
+  });
+}
+
+TEST(Test_Polynomial, PolynomAdditionAndSubtractionIsCorrectNoThrow) {
+  std::vector<std::pair<double, size_t>> source1 = {
+      {2.0, 200}, {3.0, 110}, {1.0, 1}};
+
+  std::vector<std::pair<double, size_t>> source2 = {
+      {1.0, 200}, {-3.0, 110}, {4.0, 0}};
+
+  Polynomial p1(source1); // 2x^2 + 3x^1y^1 + 1z^1.
+  // p1.print_polynom();
+  Polynomial p2(source2); // 1x^2 - 3x^1y^1 + 4.
+  // p2.print_polynom();
+
+  std::vector<std::pair<double, size_t>> data1, data2;
+  data1 = p1.get_polynom();
+  data2 = p2.get_polynom();
+
+  EXPECT_NO_THROW({
+    Polynomial add_p_1 = p1 + p2; // 3x^2 + 1z^1 +  4.
+    // add_p_1.print_polynom();
     Polynomial sub_p_1 = p1 - p2; // 1x^2 + 6x^1y^1 + 1z^1 - 4.
-    //sub_p_1.print_polynom();
+    // sub_p_1.print_polynom();
 
     EXPECT_FALSE(add_p_1.is_empty());
     EXPECT_FALSE(sub_p_1.is_empty());
@@ -219,11 +209,10 @@ TEST(Test_Polynomial, PolynomAdditionAndSubtractionIsCorrectNoThrow)
     EXPECT_EQ(data2[2].second, 1);
     EXPECT_EQ(data2[3].second, 0);
 
-
     Polynomial add_p_2 = p2 + p1; // 3x^2 + 1z^1 +  4.
-    //add_p_2.print_polynom();
+    // add_p_2.print_polynom();
     Polynomial sub_p_2 = p2 - p1; // -1x^2 - 6x^1y^1 - 1z^1 + 4.
-    //sub_p_2.print_polynom();
+    // sub_p_2.print_polynom();
 
     EXPECT_FALSE(add_p_2.is_empty());
     EXPECT_FALSE(sub_p_2.is_empty());
@@ -245,24 +234,22 @@ TEST(Test_Polynomial, PolynomAdditionAndSubtractionIsCorrectNoThrow)
     EXPECT_EQ(data2[1].second, 110);
     EXPECT_EQ(data2[2].second, 1);
     EXPECT_EQ(data2[3].second, 0);
-        });
+  });
 }
 
-TEST(Test_Polynomial, PolynomMultiplicationConstantIsCorrectNoThrow)
-{
-    std::vector<std::pair<double, size_t>> source = { { 2.0, 200 }, { -3.0, 10 } };
+TEST(Test_Polynomial, PolynomMultiplicationConstantIsCorrectNoThrow) {
+  std::vector<std::pair<double, size_t>> source = {{2.0, 200}, {-3.0, 10}};
 
-    Polynomial p(source); // 2x^2 - 3y^1.
-    //p.print_polynom();
-    double const_p = 2.0;
+  Polynomial p(source); // 2x^2 - 3y^1.
+  // p.print_polynom();
+  double const_p = 2.0;
 
-    std::vector<std::pair<double, size_t>> data1, data2;
-    data1 = p.get_polynom();
+  std::vector<std::pair<double, size_t>> data1, data2;
+  data1 = p.get_polynom();
 
-    EXPECT_NO_THROW
-    ({
-        Polynomial res_p = p * const_p; // 4x^2 - 6y^1, при const_p = 2.0.
-    //res_p.print_polynom();
+  EXPECT_NO_THROW({
+    Polynomial res_p = p * const_p; // 4x^2 - 6y^1, при const_p = 2.0.
+    // res_p.print_polynom();
     EXPECT_FALSE(res_p.is_empty());
 
     data2 = res_p.get_polynom();
@@ -270,41 +257,37 @@ TEST(Test_Polynomial, PolynomMultiplicationConstantIsCorrectNoThrow)
     EXPECT_EQ(data2[1].first, data1[1].first * const_p);
     EXPECT_EQ(data2[0].second, data1[0].second);
     EXPECT_EQ(data2[1].second, data1[1].second);
-        });
+  });
 }
 
-TEST(Test_Polynomial, PolynomMultiplicationZeroNoThrow)
-{
-    std::vector<std::pair<double, size_t>> source = { { 2.0, 200 } };
+TEST(Test_Polynomial, PolynomMultiplicationZeroNoThrow) {
+  std::vector<std::pair<double, size_t>> source = {{2.0, 200}};
 
-    Polynomial p(source); // 2x^2.
-    //p.print_polynom();
+  Polynomial p(source); // 2x^2.
+  // p.print_polynom();
 
-    EXPECT_NO_THROW
-    ({
-        Polynomial res_p = p * 0.0; // Empty.
-    //res_p.print_polynom();
+  EXPECT_NO_THROW({
+    Polynomial res_p = p * 0.0; // Empty.
+    // res_p.print_polynom();
     EXPECT_TRUE(res_p.is_empty());
-        });
+  });
 }
 
-TEST(Test_Polynomial, MultiplicationPolynomIsCorrectNoThrow)
-{
-    std::vector<std::pair<double, size_t>> source1 = { { 2.0, 100 }, { 1.0, 1 } };
+TEST(Test_Polynomial, MultiplicationPolynomIsCorrectNoThrow) {
+  std::vector<std::pair<double, size_t>> source1 = {{2.0, 100}, {1.0, 1}};
 
-    std::vector<std::pair<double, size_t>> source2 = { { 3.0, 100 }, { 4.0, 0 } };
+  std::vector<std::pair<double, size_t>> source2 = {{3.0, 100}, {4.0, 0}};
 
-    Polynomial p1(source1); // 2x^1 + 1z^1.
-    //p1.print_polynom();
-    Polynomial p2(source2); // 3x^1 + 4.
-    //p2.print_polynom();
+  Polynomial p1(source1); // 2x^1 + 1z^1.
+  // p1.print_polynom();
+  Polynomial p2(source2); // 3x^1 + 4.
+  // p2.print_polynom();
 
-    std::vector<std::pair<double, size_t>> data;
+  std::vector<std::pair<double, size_t>> data;
 
-    EXPECT_NO_THROW
-    ({
-        Polynomial res_p = p1 * p2; // 6x^2 + 3x^1z^1 + 8x^1 + 4z^1.
-    //res_p.print_polynom();
+  EXPECT_NO_THROW({
+    Polynomial res_p = p1 * p2; // 6x^2 + 3x^1z^1 + 8x^1 + 4z^1.
+    // res_p.print_polynom();
     EXPECT_FALSE(res_p.is_empty());
 
     data = res_p.get_polynom();
@@ -316,655 +299,595 @@ TEST(Test_Polynomial, MultiplicationPolynomIsCorrectNoThrow)
     EXPECT_EQ(data[1].second, 101);
     EXPECT_EQ(data[2].second, 100);
     EXPECT_EQ(data[3].second, 1);
-        });
+  });
 }
 
-TEST(Test_Polynomial, MultiplicationPolynomAnyThrow)
-{
-    std::vector<std::pair<double, size_t>> source1 = { { 2.0, 999 } };
+TEST(Test_Polynomial, MultiplicationPolynomAnyThrow) {
+  std::vector<std::pair<double, size_t>> source1 = {{2.0, 999}};
 
-    std::vector<std::pair<double, size_t>> source2 = { { 4.0, 998 } };
+  std::vector<std::pair<double, size_t>> source2 = {{4.0, 998}};
 
-    Polynomial p1(source1); // 2x^9y^9z^9.
-    //p1.print_polynom();
-    Polynomial p2(source2); // 4x^9y^9z^8.
-    //p2.print_polynom();
+  Polynomial p1(source1); // 2x^9y^9z^9.
+  // p1.print_polynom();
+  Polynomial p2(source2); // 4x^9y^9z^8.
+  // p2.print_polynom();
 
-    EXPECT_THROW(Polynomial res_p = p1 * p2, std::range_error);
+  EXPECT_THROW(Polynomial res_p = p1 * p2, std::range_error);
 }
 
 // Tests UnorderedTable:
 
 using FindResultInt = typename BaseTable<std::string, int>::FindResult;
 
-TEST(Test_UnorderedTable, CreateIsCorrect)
-{
-    UnorderedTable<std::string, int> table;
+TEST(Test_UnorderedTable, CreateIsCorrect) {
+  UnorderedTable<std::string, int> table;
+  EXPECT_EQ(table.size(), 0);
+  EXPECT_EQ(table.getTableName(), "UnorderedTable");
+}
+
+TEST(Test_UnorderedTable, InsertAndFind) {
+  UnorderedTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.insert("b", 20);
+
+    FindResultInt res1 = table.find("a");
+    FindResultInt res2 = table.find("b");
+
+    EXPECT_NE(res1.value, nullptr);
+    EXPECT_NE(res2.value, nullptr);
+
+    EXPECT_EQ(*res1.value, 10);
+    EXPECT_EQ(*res2.value, 20);
+  });
+}
+
+TEST(Test_UnorderedTable, OverwriteKey) {
+  UnorderedTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.insert("a", 50);
+
+    FindResultInt res = table.find("a");
+    EXPECT_EQ(*res.value, 50);
+    EXPECT_EQ(table.size(), 1);
+  });
+}
+
+TEST(Test_UnorderedTable, FindNonExistent) {
+  UnorderedTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    FindResultInt res = table.find("x");
+    EXPECT_EQ(res.value, nullptr);
+  });
+}
+
+TEST(Test_UnorderedTable, Remove) {
+  UnorderedTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.insert("b", 20);
+
+    table.remove("a");
+
+    FindResultInt res1 = table.find("a");
+    EXPECT_EQ(res1.value, nullptr);
+    EXPECT_EQ(table.size(), 1);
+
+    FindResultInt res2 = table.find("b");
+    EXPECT_NE(res2.value, nullptr);
+    EXPECT_EQ(*res2.value, 20);
+  });
+}
+
+TEST(Test_UnorderedTable, RemoveNonExistent) {
+  UnorderedTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.remove("x");
+
+    EXPECT_EQ(table.size(), 1);
+  });
+}
+
+TEST(Test_UnorderedTable, Clear_GetTableName_Size) {
+  UnorderedTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 1);
+    EXPECT_EQ(table.size(), 1);
+    table.insert("b", 2);
+    EXPECT_EQ(table.size(), 2);
+
+    table.clear();
+
     EXPECT_EQ(table.size(), 0);
     EXPECT_EQ(table.getTableName(), "UnorderedTable");
-}
-
-TEST(Test_UnorderedTable, InsertAndFind)
-{
-    UnorderedTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.insert("b", 20);
-
-        FindResultInt res1 = table.find("a");
-        FindResultInt res2 = table.find("b");
-
-        EXPECT_NE(res1.value, nullptr);
-        EXPECT_NE(res2.value, nullptr);
-
-        EXPECT_EQ(*res1.value, 10);
-        EXPECT_EQ(*res2.value, 20);
-        });
-}
-
-TEST(Test_UnorderedTable, OverwriteKey)
-{
-    UnorderedTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.insert("a", 50);
-
-        FindResultInt res = table.find("a");
-        EXPECT_EQ(*res.value, 50);
-        EXPECT_EQ(table.size(), 1);
-        });
-}
-
-TEST(Test_UnorderedTable, FindNonExistent)
-{
-    UnorderedTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        FindResultInt res = table.find("x");
-        EXPECT_EQ(res.value, nullptr);
-        });
-}
-
-TEST(Test_UnorderedTable, Remove)
-{
-    UnorderedTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.insert("b", 20);
-
-        table.remove("a");
-
-        FindResultInt res1 = table.find("a");
-        EXPECT_EQ(res1.value, nullptr);
-        EXPECT_EQ(table.size(), 1);
-
-        FindResultInt res2 = table.find("b");
-        EXPECT_NE(res2.value, nullptr);
-        EXPECT_EQ(*res2.value, 20);
-        });
-}
-
-TEST(Test_UnorderedTable, RemoveNonExistent)
-{
-    UnorderedTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.remove("x");
-
-        EXPECT_EQ(table.size(), 1);
-        });
-}
-
-TEST(Test_UnorderedTable, Clear_GetTableName_Size)
-{
-    UnorderedTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 1);
-        EXPECT_EQ(table.size(), 1);
-        table.insert("b", 2);
-        EXPECT_EQ(table.size(), 2);
-
-        table.clear();
-
-        EXPECT_EQ(table.size(), 0);
-        EXPECT_EQ(table.getTableName(), "UnorderedTable");
-        });
+  });
 }
 
 // Tests AVLTable:
 
-TEST(Test_AVLTable, CreateIsCorrect)
-{
-    AVLTable<std::string, int> table;
+TEST(Test_AVLTable, CreateIsCorrect) {
+  AVLTable<std::string, int> table;
+  EXPECT_EQ(table.size(), 0);
+  EXPECT_EQ(table.getTableName(), "AVLTable");
+}
+
+TEST(Test_AVLTable, InsertAndFind) {
+  AVLTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 1);
+    table.insert("b", 2);
+    table.insert("c", 3);
+
+    FindResultInt res1 = table.find("a");
+    FindResultInt res2 = table.find("b");
+    FindResultInt res3 = table.find("c");
+
+    EXPECT_EQ(*res1.value, 1);
+    EXPECT_EQ(*res2.value, 2);
+    EXPECT_EQ(*res3.value, 3);
+  });
+}
+
+TEST(Test_AVLTable, OverwriteKey) {
+  AVLTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 1);
+    table.insert("a", 99);
+
+    FindResultInt res = table.find("a");
+
+    EXPECT_EQ(*res.value, 99);
+    EXPECT_EQ(table.size(), 1);
+  });
+}
+
+TEST(Test_AVLTable, FindNonExistent) {
+  AVLTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    FindResultInt res = table.find("x");
+    EXPECT_EQ(res.value, nullptr);
+  });
+}
+
+TEST(Test_AVLTable, RemoveLeaf) {
+  AVLTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("b", 1);
+    table.insert("a", 2);
+
+    table.remove("a");
+
+    FindResultInt res = table.find("a");
+
+    EXPECT_EQ(res.value, nullptr);
+    EXPECT_EQ(table.size(), 1);
+  });
+}
+
+TEST(Test_AVLTable, RemoveNodeWithOneChild) {
+  AVLTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("c", 1);
+    table.insert("b", 2);
+    table.insert("a", 3);
+
+    table.remove("b");
+
+    FindResultInt res1 = table.find("b");
+    FindResultInt res2 = table.find("a");
+
+    EXPECT_EQ(res1.value, nullptr);
+
+    EXPECT_NE(res2.value, nullptr);
+    EXPECT_EQ(*res2.value, 3);
+  });
+}
+
+TEST(Test_AVLTable, RemoveNodeWithTwoChild) {
+  AVLTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("b", 1);
+    table.insert("a", 2);
+    table.insert("c", 3);
+
+    table.remove("b");
+
+    FindResultInt res1 = table.find("b");
+    FindResultInt res2 = table.find("a");
+    FindResultInt res3 = table.find("c");
+
+    EXPECT_EQ(res1.value, nullptr);
+
+    EXPECT_NE(res2.value, nullptr);
+    EXPECT_EQ(*res2.value, 2);
+    EXPECT_NE(res3.value, nullptr);
+    EXPECT_EQ(*res3.value, 3);
+  });
+}
+
+TEST(Test_AVLTable, RemoveNonExistent) {
+  AVLTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.remove("x");
+
+    EXPECT_EQ(table.size(), 1);
+  });
+}
+
+TEST(Test_AVLTable, Clear_GetTableName_Size) {
+  AVLTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 1);
+    EXPECT_EQ(table.size(), 1);
+    table.insert("b", 2);
+    EXPECT_EQ(table.size(), 2);
+
+    table.clear();
+
     EXPECT_EQ(table.size(), 0);
     EXPECT_EQ(table.getTableName(), "AVLTable");
-}
-
-TEST(Test_AVLTable, InsertAndFind)
-{
-    AVLTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 1);
-        table.insert("b", 2);
-        table.insert("c", 3);
-
-        FindResultInt res1 = table.find("a");
-        FindResultInt res2 = table.find("b");
-        FindResultInt res3 = table.find("c");
-
-        EXPECT_EQ(*res1.value, 1);
-        EXPECT_EQ(*res2.value, 2);
-        EXPECT_EQ(*res3.value, 3);
-        });
-}
-
-TEST(Test_AVLTable, OverwriteKey)
-{
-    AVLTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 1);
-        table.insert("a", 99);
-
-        FindResultInt res = table.find("a");
-
-        EXPECT_EQ(*res.value, 99);
-        EXPECT_EQ(table.size(), 1);
-        });
-}
-
-TEST(Test_AVLTable, FindNonExistent)
-{
-    AVLTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        FindResultInt res = table.find("x");
-        EXPECT_EQ(res.value, nullptr);
-        });
-}
-
-TEST(Test_AVLTable, RemoveLeaf)
-{
-    AVLTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("b", 1);
-        table.insert("a", 2);
-
-        table.remove("a");
-
-        FindResultInt res = table.find("a");
-
-        EXPECT_EQ(res.value, nullptr);
-        EXPECT_EQ(table.size(), 1);
-        });
-}
-
-TEST(Test_AVLTable, RemoveNodeWithOneChild)
-{
-    AVLTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("c", 1);
-        table.insert("b", 2);
-        table.insert("a", 3);
-
-        table.remove("b");
-
-        FindResultInt res1 = table.find("b");
-        FindResultInt res2 = table.find("a");
-
-        EXPECT_EQ(res1.value, nullptr);
-
-        EXPECT_NE(res2.value, nullptr);
-        EXPECT_EQ(*res2.value, 3);
-        });
-}
-
-TEST(Test_AVLTable, RemoveNodeWithTwoChild)
-{
-    AVLTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("b", 1);
-        table.insert("a", 2);
-        table.insert("c", 3);
-
-        table.remove("b");
-
-        FindResultInt res1 = table.find("b");
-        FindResultInt res2 = table.find("a");
-        FindResultInt res3 = table.find("c");
-
-        EXPECT_EQ(res1.value, nullptr);
-
-        EXPECT_NE(res2.value, nullptr);
-        EXPECT_EQ(*res2.value, 2);
-        EXPECT_NE(res3.value, nullptr);
-        EXPECT_EQ(*res3.value, 3);
-        });
-}
-
-TEST(Test_AVLTable, RemoveNonExistent)
-{
-    AVLTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.remove("x");
-
-        EXPECT_EQ(table.size(), 1);
-        });
-}
-
-TEST(Test_AVLTable, Clear_GetTableName_Size)
-{
-    AVLTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 1);
-        EXPECT_EQ(table.size(), 1);
-        table.insert("b", 2);
-        EXPECT_EQ(table.size(), 2);
-
-        table.clear();
-
-        EXPECT_EQ(table.size(), 0);
-        EXPECT_EQ(table.getTableName(), "AVLTable");
-        });
+  });
 }
 
 // Tests HashTable:
 
-TEST(Test_HashTable, CreateIsCorrect)
-{
-    HashTable<std::string, int> table;
+TEST(Test_HashTable, CreateIsCorrect) {
+  HashTable<std::string, int> table;
+  EXPECT_EQ(table.size(), 0);
+  EXPECT_EQ(table.getTableName(), "HashTable");
+}
+
+TEST(Test_HashTable, InsertAndFind) {
+  HashTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.insert("b", 20);
+
+    FindResultInt res1 = table.find("a");
+    FindResultInt res2 = table.find("b");
+
+    EXPECT_EQ(*res1.value, 10);
+    EXPECT_EQ(*res2.value, 20);
+  });
+}
+
+TEST(Test_HashTable, OverwriteKey) {
+  HashTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.insert("a", 50);
+
+    FindResultInt res = table.find("a");
+
+    EXPECT_EQ(*res.value, 50);
+    EXPECT_EQ(table.size(), 1);
+  });
+}
+
+TEST(Test_HashTable, FindNonExistent) {
+  HashTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    FindResultInt res = table.find("x");
+    EXPECT_EQ(res.value, nullptr);
+  });
+}
+
+TEST(Test_HashTable, Remove) {
+  HashTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.insert("b", 20);
+
+    table.remove("a");
+
+    FindResultInt res1 = table.find("a");
+    EXPECT_EQ(res1.value, nullptr);
+    EXPECT_EQ(table.size(), 1);
+
+    FindResultInt res2 = table.find("b");
+    EXPECT_NE(res2.value, nullptr);
+    EXPECT_EQ(*res2.value, 20);
+  });
+}
+
+TEST(Test_HashTable, RemoveNonExistent) {
+  HashTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 10);
+    table.remove("x");
+
+    EXPECT_EQ(table.size(), 1);
+  });
+}
+
+TEST(Test_HashTable, RehashTrigger) {
+  HashTable<std::string, int> table(2, 0.5);
+
+  EXPECT_NO_THROW({
+    table.insert("a", 1);
+    EXPECT_EQ(table.size_capacity(), 2);
+    table.insert("b", 2); // Должен вызвать rehash().
+
+    EXPECT_EQ(table.size(), 2);
+    EXPECT_EQ(table.size_capacity(), 4);
+
+    FindResultInt res1 = table.find("a");
+    FindResultInt res2 = table.find("b");
+
+    EXPECT_NE(res1.value, nullptr);
+    EXPECT_EQ(*res1.value, 1);
+    EXPECT_NE(res2.value, nullptr);
+    EXPECT_EQ(*res2.value, 2);
+  });
+}
+
+TEST(Test_HashTable, Clear_GetTableName_Size) {
+  HashTable<std::string, int> table;
+
+  EXPECT_NO_THROW({
+    table.insert("a", 1);
+    EXPECT_EQ(table.size(), 1);
+    table.insert("b", 2);
+    EXPECT_EQ(table.size(), 2);
+
+    table.clear();
+
     EXPECT_EQ(table.size(), 0);
     EXPECT_EQ(table.getTableName(), "HashTable");
-}
-
-TEST(Test_HashTable, InsertAndFind)
-{
-    HashTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.insert("b", 20);
-
-        FindResultInt res1 = table.find("a");
-        FindResultInt res2 = table.find("b");
-
-        EXPECT_EQ(*res1.value, 10);
-        EXPECT_EQ(*res2.value, 20);
-        });
-}
-
-TEST(Test_HashTable, OverwriteKey)
-{
-    HashTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.insert("a", 50);
-
-        FindResultInt res = table.find("a");
-
-        EXPECT_EQ(*res.value, 50);
-        EXPECT_EQ(table.size(), 1);
-        });
-}
-
-TEST(Test_HashTable, FindNonExistent)
-{
-    HashTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        FindResultInt res = table.find("x");
-        EXPECT_EQ(res.value, nullptr);
-        });
-}
-
-TEST(Test_HashTable, Remove)
-{
-    HashTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.insert("b", 20);
-
-        table.remove("a");
-
-        FindResultInt res1 = table.find("a");
-        EXPECT_EQ(res1.value, nullptr);
-        EXPECT_EQ(table.size(), 1);
-
-        FindResultInt res2 = table.find("b");
-        EXPECT_NE(res2.value, nullptr);
-        EXPECT_EQ(*res2.value, 20);
-        });
-}
-
-TEST(Test_HashTable, RemoveNonExistent)
-{
-    HashTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 10);
-        table.remove("x");
-
-        EXPECT_EQ(table.size(), 1);
-        });
-}
-
-TEST(Test_HashTable, RehashTrigger)
-{
-    HashTable<std::string, int> table(2, 0.5);
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 1);
-        EXPECT_EQ(table.size_capacity(), 2);
-        table.insert("b", 2); // Должен вызвать rehash().
-
-        EXPECT_EQ(table.size(), 2);
-        EXPECT_EQ(table.size_capacity(), 4);
-
-        FindResultInt res1 = table.find("a");
-        FindResultInt res2 = table.find("b");
-
-        EXPECT_NE(res1.value, nullptr);
-        EXPECT_EQ(*res1.value, 1);
-        EXPECT_NE(res2.value, nullptr);
-        EXPECT_EQ(*res2.value, 2);
-        });
-}
-
-TEST(Test_HashTable, Clear_GetTableName_Size)
-{
-    HashTable<std::string, int> table;
-
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", 1);
-        EXPECT_EQ(table.size(), 1);
-        table.insert("b", 2);
-        EXPECT_EQ(table.size(), 2);
-
-        table.clear();
-
-        EXPECT_EQ(table.size(), 0);
-        EXPECT_EQ(table.getTableName(), "HashTable");
-        });
+  });
 }
 
 // Tests MainTable:
 
-TEST(Test_MainTable, InsertALLAndFindALL)
-{
-    MainTable<std::string, int> table;
+TEST(Test_MainTable, InsertALLAndFindALL) {
+  MainTable<std::string, int> table;
 
-    EXPECT_NO_THROW
-    ({
-        table.insertALL("a", 10);
-        table.insertALL("b", 20);
+  EXPECT_NO_THROW({
+    table.insertALL("a", 10);
+    table.insertALL("b", 20);
 
-        FindResultInt res1 = table.findALL("a");
-        FindResultInt res2 = table.findALL("b");
+    FindResultInt res1 = table.findALL("a");
+    FindResultInt res2 = table.findALL("b");
 
-        EXPECT_NE(res1.value, nullptr);
-        EXPECT_EQ(*res1.value, 10);
-        EXPECT_NE(res2.value, nullptr);
-        EXPECT_EQ(*res2.value, 20);
-        });
+    EXPECT_NE(res1.value, nullptr);
+    EXPECT_EQ(*res1.value, 10);
+    EXPECT_NE(res2.value, nullptr);
+    EXPECT_EQ(*res2.value, 20);
+  });
 }
 
-TEST(Test_MainTable, RemoveALL)
-{
-    MainTable<std::string, int> table;
+TEST(Test_MainTable, RemoveALL) {
+  MainTable<std::string, int> table;
 
-    EXPECT_NO_THROW
-    ({
-        table.insertALL("a", 10);
-        table.insertALL("b", 20);
+  EXPECT_NO_THROW({
+    table.insertALL("a", 10);
+    table.insertALL("b", 20);
 
-        table.removeALL("a");
+    table.removeALL("a");
 
-        FindResultInt res1 = table.findALL("a");
-        EXPECT_EQ(res1.value, nullptr);
+    FindResultInt res1 = table.findALL("a");
+    EXPECT_EQ(res1.value, nullptr);
 
-        FindResultInt res2 = table.findALL("b");
-        EXPECT_NE(res2.value, nullptr);
-        EXPECT_EQ(*res2.value, 20);
-        });
+    FindResultInt res2 = table.findALL("b");
+    EXPECT_NE(res2.value, nullptr);
+    EXPECT_EQ(*res2.value, 20);
+  });
 }
 
-TEST(Test_MainTable, is_emptyALL)
-{
-    MainTable<std::string, int> table;
+TEST(Test_MainTable, is_emptyALL) {
+  MainTable<std::string, int> table;
 
-    EXPECT_NO_THROW
-    ({
-        EXPECT_TRUE(table.is_emptyALL());
+  EXPECT_NO_THROW({
+    EXPECT_TRUE(table.is_emptyALL());
 
-        table.insertALL("a", 1);
+    table.insertALL("a", 1);
 
-        EXPECT_FALSE(table.is_emptyALL());
-        });
+    EXPECT_FALSE(table.is_emptyALL());
+  });
 }
 
 // Polynom Table Tests:
 
-using FindResultPolynomial = typename BaseTable<std::string, Polynomial>::FindResult;
+using FindResultPolynomial =
+    typename BaseTable<std::string, Polynomial>::FindResult;
 
-TEST(Test_TableWithPolynomial, UnorderedTableWithPolynomial)
-{
-    UnorderedTable<std::string, Polynomial> table;
+TEST(Test_TableWithPolynomial, UnorderedTableWithPolynomial) {
+  UnorderedTable<std::string, Polynomial> table;
 
-    std::vector<std::pair<double, size_t>> source = { {1.0, 111} };
-    std::vector<std::pair<double, size_t>> data;
-    Polynomial p(source);
+  std::vector<std::pair<double, size_t>> source = {{1.0, 111}};
+  std::vector<std::pair<double, size_t>> data;
+  Polynomial p(source);
 
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", p);
+  EXPECT_NO_THROW({
+    table.insert("a", p);
 
-        FindResultPolynomial res = table.find("a");
+    FindResultPolynomial res = table.find("a");
 
-        EXPECT_FALSE((*res.value).is_empty());
-        data = (*res.value).get_polynom();
+    EXPECT_FALSE((*res.value).is_empty());
+    data = (*res.value).get_polynom();
 
-        EXPECT_EQ(data[0].first, 1.0);
-        EXPECT_EQ(data[0].second, 111);
-        });
+    EXPECT_EQ(data[0].first, 1.0);
+    EXPECT_EQ(data[0].second, 111);
+  });
 }
 
-TEST(Test_TableWithPolynomial, AVLTableWithPolynomial)
-{
-    AVLTable<std::string, Polynomial> table;
+TEST(Test_TableWithPolynomial, AVLTableWithPolynomial) {
+  AVLTable<std::string, Polynomial> table;
 
-    std::vector<std::pair<double, size_t>> source = { {2.0, 222} };
-    std::vector<std::pair<double, size_t>> data;
-    Polynomial p(source);
+  std::vector<std::pair<double, size_t>> source = {{2.0, 222}};
+  std::vector<std::pair<double, size_t>> data;
+  Polynomial p(source);
 
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", p);
+  EXPECT_NO_THROW({
+    table.insert("a", p);
 
-        FindResultPolynomial res = table.find("a");
+    FindResultPolynomial res = table.find("a");
 
-        EXPECT_FALSE((*res.value).is_empty());
-        data = (*res.value).get_polynom();
+    EXPECT_FALSE((*res.value).is_empty());
+    data = (*res.value).get_polynom();
 
-        EXPECT_EQ(data[0].first, 2.0);
-        EXPECT_EQ(data[0].second, 222);
-        });
+    EXPECT_EQ(data[0].first, 2.0);
+    EXPECT_EQ(data[0].second, 222);
+  });
 }
 
-TEST(Test_TableWithPolynomial, HashTableWithPolynomial)
-{
-    HashTable<std::string, Polynomial> table;
+TEST(Test_TableWithPolynomial, HashTableWithPolynomial) {
+  HashTable<std::string, Polynomial> table;
 
-    std::vector<std::pair<double, size_t>> source = { {3.0, 333} };
-    std::vector<std::pair<double, size_t>> data;
-    Polynomial p(source);
+  std::vector<std::pair<double, size_t>> source = {{3.0, 333}};
+  std::vector<std::pair<double, size_t>> data;
+  Polynomial p(source);
 
-    EXPECT_NO_THROW
-    ({
-        table.insert("a", p);
+  EXPECT_NO_THROW({
+    table.insert("a", p);
 
-        FindResultPolynomial res = table.find("a");
+    FindResultPolynomial res = table.find("a");
 
-        EXPECT_FALSE((*res.value).is_empty());
-        data = (*res.value).get_polynom();
+    EXPECT_FALSE((*res.value).is_empty());
+    data = (*res.value).get_polynom();
 
-        EXPECT_EQ(data[0].first, 3.0);
-        EXPECT_EQ(data[0].second, 333);
-        });
+    EXPECT_EQ(data[0].first, 3.0);
+    EXPECT_EQ(data[0].second, 333);
+  });
 }
 
 // Stress Tests:
 
-TEST(Test_Stress, ManyInsertFindRemoveUnorderedTable)
-{
-    UnorderedTable<std::string, int> table;
+TEST(Test_Stress, ManyInsertFindRemoveUnorderedTable) {
+  UnorderedTable<std::string, int> table;
 
-    const size_t N = 5000;
+  const size_t N = 5000;
 
-    // Вставка записи:
-    for (size_t i = 0; i < N; ++i) {
-        std::string key = "key" + std::to_string(i);
+  // Вставка записи:
+  for (size_t i = 0; i < N; ++i) {
+    std::string key = "key" + std::to_string(i);
 
-        table.insert(key, i);
-    }
-    EXPECT_EQ(table.size(), N);
+    table.insert(key, i);
+  }
+  EXPECT_EQ(table.size(), N);
 
-    // Поиск определённых записей:
-    for (int i = 0; i < N; i += 100) {
-        std::string key = "key" + std::to_string(i);
+  // Поиск определённых записей:
+  for (int i = 0; i < N; i += 100) {
+    std::string key = "key" + std::to_string(i);
 
-        FindResultInt res = table.find(key);
-        EXPECT_NE(res.value, nullptr);
-        EXPECT_EQ(*res.value, i);
-    }
+    FindResultInt res = table.find(key);
+    EXPECT_NE(res.value, nullptr);
+    EXPECT_EQ(*res.value, i);
+  }
 
-    // Удаление каждой второй записи:
-    for (int i = 0; i < N; i += 2) {
-        std::string key = "key" + std::to_string(i);
+  // Удаление каждой второй записи:
+  for (int i = 0; i < N; i += 2) {
+    std::string key = "key" + std::to_string(i);
 
-        table.remove(key);
-    }
-    EXPECT_EQ(table.size(), N / 2);
+    table.remove(key);
+  }
+  EXPECT_EQ(table.size(), N / 2);
 
-    // Проверка отсутствия удалённых записей:
-    for (int i = 0; i < N; i += 2) {
-        std::string key = "key" + std::to_string(i);
+  // Проверка отсутствия удалённых записей:
+  for (int i = 0; i < N; i += 2) {
+    std::string key = "key" + std::to_string(i);
 
-        FindResultInt res = table.find(key);
-        EXPECT_EQ(res.value, nullptr);
-    }
+    FindResultInt res = table.find(key);
+    EXPECT_EQ(res.value, nullptr);
+  }
 }
 
-TEST(Test_Stress, ManyInsertFindRemoveAVLTable)
-{
-    AVLTable<std::string, int> table;
+TEST(Test_Stress, ManyInsertFindRemoveAVLTable) {
+  AVLTable<std::string, int> table;
 
-    const size_t N = 5000;
+  const size_t N = 5000;
 
-    // Вставка записи:
-    for (size_t i = 0; i < N; ++i) {
-        std::string key = "key" + std::to_string(i);
+  // Вставка записи:
+  for (size_t i = 0; i < N; ++i) {
+    std::string key = "key" + std::to_string(i);
 
-        table.insert(key, i);
-    }
-    EXPECT_EQ(table.size(), N);
+    table.insert(key, i);
+  }
+  EXPECT_EQ(table.size(), N);
 
-    // Поиск определённых записей:
-    for (int i = 0; i < N; i += 100) {
-        std::string key = "key" + std::to_string(i);
+  // Поиск определённых записей:
+  for (int i = 0; i < N; i += 100) {
+    std::string key = "key" + std::to_string(i);
 
-        FindResultInt res = table.find(key);
-        EXPECT_NE(res.value, nullptr);
-        EXPECT_EQ(*res.value, i);
-    }
+    FindResultInt res = table.find(key);
+    EXPECT_NE(res.value, nullptr);
+    EXPECT_EQ(*res.value, i);
+  }
 
-    // Удаление каждой второй записи:
-    for (int i = 0; i < N; i += 2) {
-        std::string key = "key" + std::to_string(i);
+  // Удаление каждой второй записи:
+  for (int i = 0; i < N; i += 2) {
+    std::string key = "key" + std::to_string(i);
 
-        table.remove(key);
-    }
-    EXPECT_EQ(table.size(), N / 2);
+    table.remove(key);
+  }
+  EXPECT_EQ(table.size(), N / 2);
 
-    // Проверка отсутствия удалённых записей:
-    for (int i = 0; i < N; i += 2) {
-        std::string key = "key" + std::to_string(i);
+  // Проверка отсутствия удалённых записей:
+  for (int i = 0; i < N; i += 2) {
+    std::string key = "key" + std::to_string(i);
 
-        FindResultInt res = table.find(key);
-        EXPECT_EQ(res.value, nullptr);
-    }
+    FindResultInt res = table.find(key);
+    EXPECT_EQ(res.value, nullptr);
+  }
 }
 
-TEST(Test_Stress, ManyInsertFindRemoveHashTable)
-{
-    HashTable<std::string, int> table;
+TEST(Test_Stress, ManyInsertFindRemoveHashTable) {
+  HashTable<std::string, int> table;
 
-    const size_t N = 5000;
+  const size_t N = 5000;
 
-    // Вставка записи:
-    for (size_t i = 0; i < N; ++i) {
-        std::string key = "key" + std::to_string(i);
+  // Вставка записи:
+  for (size_t i = 0; i < N; ++i) {
+    std::string key = "key" + std::to_string(i);
 
-        table.insert(key, i);
-    }
-    EXPECT_EQ(table.size(), N);
+    table.insert(key, i);
+  }
+  EXPECT_EQ(table.size(), N);
 
-    // Поиск определённых записей:
-    for (int i = 0; i < N; i += 100) {
-        std::string key = "key" + std::to_string(i);
+  // Поиск определённых записей:
+  for (int i = 0; i < N; i += 100) {
+    std::string key = "key" + std::to_string(i);
 
-        FindResultInt res = table.find(key);
-        EXPECT_NE(res.value, nullptr);
-        EXPECT_EQ(*res.value, i);
-    }
+    FindResultInt res = table.find(key);
+    EXPECT_NE(res.value, nullptr);
+    EXPECT_EQ(*res.value, i);
+  }
 
-    // Удаление каждой второй записи:
-    for (int i = 0; i < N; i += 2) {
-        std::string key = "key" + std::to_string(i);
+  // Удаление каждой второй записи:
+  for (int i = 0; i < N; i += 2) {
+    std::string key = "key" + std::to_string(i);
 
-        table.remove(key);
-    }
-    EXPECT_EQ(table.size(), N / 2);
+    table.remove(key);
+  }
+  EXPECT_EQ(table.size(), N / 2);
 
-    // Проверка отсутствия удалённых записей:
-    for (int i = 0; i < N; i += 2) {
-        std::string key = "key" + std::to_string(i);
+  // Проверка отсутствия удалённых записей:
+  for (int i = 0; i < N; i += 2) {
+    std::string key = "key" + std::to_string(i);
 
-        FindResultInt res = table.find(key);
-        EXPECT_EQ(res.value, nullptr);
-    }
+    FindResultInt res = table.find(key);
+    EXPECT_EQ(res.value, nullptr);
+  }
 }
