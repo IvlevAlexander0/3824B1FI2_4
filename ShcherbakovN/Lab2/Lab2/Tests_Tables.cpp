@@ -1,6 +1,6 @@
-#include "pch.h"
 #include "../Lab2Code/MainTable.h"
 #include "../Lab2Code/Polynom.h"
+#include "pch.h"
 
 // Tests Forward_list_with_f_head:
 
