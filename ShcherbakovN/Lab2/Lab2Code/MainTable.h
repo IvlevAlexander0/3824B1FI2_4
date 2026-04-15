@@ -4,26 +4,20 @@
 #include "HashTable.h"
 #include "UnorderedTable.h"
 
-class LoggingOperations // Класс для логирования количества произведенных
-                        // операций пользователем.
-{
+class LoggingOperations {
 private:
-  struct InputLogs // Структура данных, подаваемых логгеру на вход при записи
-                   // логов.
-  {
-    std::string tableName; // Имя (тип) таблицы.
-    std::string operationName; // Имя (тип) выполненной операции (метода).
-    size_t operationsCount; // Число операций, затраченных на выполнение метода.
+  struct InputLogs {
+    std::string tableName;
+    std::string operationName;
+    size_t operationsCount;
   };
 
-  std::vector<InputLogs> logs; // Набор логов.
+  std::vector<InputLogs> logs;
 
-  // Общее число операций для каждого действия:
   size_t totalInsert;
   size_t totalFind;
   size_t totalRemove;
 
-  // Общее число операций у каждого типа таблиц:
   size_t totalUnorderedOp;
   size_t totalAVLOp;
   size_t totalHashOp;
@@ -42,11 +36,9 @@ public:
   ~LoggingOperations() {}
 
   void add(const std::string &tableName_, const std::string &operationName_,
-           size_t operationsCount) // Добавление лога в набор логов.
-  {
+           size_t operationsCount) {
     logs.push_back({tableName_, operationName_, operationsCount});
 
-    // Обновляем счётчики:
     if (operationName_ == "insert") {
       totalInsert += operationsCount;
     }
@@ -68,23 +60,17 @@ public:
     }
   }
 
-  void
-  writeToFile(const std::string &fileName) const // Сохранение логов в файл.
-  {
-    std::ofstream fout; // Создание потока для записи в файл.
-    fout.open(fileName); // Открытие файла для записи с именем fileName. Если
-                         // файл не существует - он создастся автоматически.
+  void writeToFile(const std::string &fileName) const {
+    std::ofstream fout;
+    fout.open(fileName);
 
-    if (fout.is_open()) // is_open() - проверяет, открылся ли файл.
-    {
-      size_t logs_size = logs.size(); // Длина вектора логов.
+    if (fout.is_open()) {
+      size_t logs_size = logs.size();
       for (size_t i = 0; i < logs_size; ++i) {
         fout << logs[i].tableName << " " << logs[i].operationName << " "
-             << logs[i].operationsCount
-             << std::endl; // Запись строк логов в файл.
+             << logs[i].operationsCount << std::endl;
       }
 
-      // Вывод общего числа операций каждого действия:
       fout << std::endl
            << "+------------------+TOTAL ACTIONS+------------------+"
            << std::endl;
@@ -92,7 +78,6 @@ public:
       fout << "Find: " << totalFind << std::endl;
       fout << "Remove: " << totalRemove << std::endl;
 
-      // Вывод общего числа операций у каждого типа таблиц:
       fout << std::endl
            << "+---------------+TOTAL FOR EACH TABLE+---------------+"
            << std::endl;
@@ -100,25 +85,21 @@ public:
       fout << "AVL: " << totalAVLOp << std::endl;
       fout << "Hash: " << totalHashOp << std::endl;
 
-      fout.close(); // Закрытие файла.
+      fout.close();
     } else {
-      std::cerr << "The file did not open!"
-                << std::endl; // Вывод сообщения об ошибке открытия файла.
+      std::cerr << "The file did not open!" << std::endl;
     }
   }
 
-  void print() const // Печать текущих логов в консоль.
-  {
-    size_t logs_size = logs.size(); // Длина вектора логов.
+  void print() const {
+    size_t logs_size = logs.size();
     for (size_t i = 0; i < logs_size; ++i) {
       std::cout << logs[i].tableName << " " << logs[i].operationName << " "
-                << logs[i].operationsCount
-                << "\n"; // Вывод строк логов в консоль.
+                << logs[i].operationsCount << "\n";
     }
   }
 
-  void clear() // Очистка текущих логов.
-  {
+  void clear() {
     logs.clear();
 
     totalInsert = 0;
@@ -131,30 +112,22 @@ public:
   }
 };
 
-template <typename TKey, typename TValue>
-class MainTable // Класс для работы сразу со всеми 3 типами таблиц.
-{
+template <typename TKey, typename TValue> class MainTable {
 private:
-  using FindResult = typename BaseTable<TKey, TValue>::
-      FindResult; // Псевдоним для удобства использования структуры FindResult
-                  // из базового класса. typename - явно указывает компилятору,
-                  // что FindResult является типом.
+  using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
   UnorderedTable<TKey, TValue> unorderedTable;
   AVLTable<TKey, TValue> avlTable;
   HashTable<TKey, TValue> hashTable;
 
-  LoggingOperations logger; // Логгер.
+  LoggingOperations logger;
 
 public:
   MainTable() {}
 
   ~MainTable() {}
 
-  size_t
-  insertALL(const TKey &key,
-            const TValue &value) // Вставка записи сразу во все 3 типа таблиц.
-  {
+  size_t insertALL(const TKey &key, const TValue &value) {
     size_t opCountUnordered = unorderedTable.insert(key, value);
     logger.add(unorderedTable.getTableName(), "insert", opCountUnordered);
 
@@ -164,13 +137,10 @@ public:
     size_t opCountHash = hashTable.insert(key, value);
     logger.add(hashTable.getTableName(), "insert", opCountHash);
 
-    return opCountUnordered + opCountAVL +
-           opCountHash; // Возвращаем количество затраченных операций в сумме.
+    return opCountUnordered + opCountAVL + opCountHash;
   }
 
-  FindResult
-  findALL(const TKey &key) // Поиск записи по ключу сразу в 3 типах таблиц.
-  {
+  FindResult findALL(const TKey &key) {
     FindResult resulttUnordered = unorderedTable.find(key);
     logger.add(unorderedTable.getTableName(), "find",
                resulttUnordered.operationsCount);
@@ -181,13 +151,12 @@ public:
     FindResult resultHash = hashTable.find(key);
     logger.add(hashTable.getTableName(), "find", resultHash.operationsCount);
 
-    FindResult result; // Объект стурктуры для хранения результата поиска.
+    FindResult result;
 
-    result.operationsCount =
-        resulttUnordered.operationsCount + resultAVL.operationsCount +
-        resultHash.operationsCount; // Количество затраченных операций в сумме.
+    result.operationsCount = resulttUnordered.operationsCount +
+                             resultAVL.operationsCount +
+                             resultHash.operationsCount;
 
-    // Получаем значение искомой записи по ключу:
     if (resulttUnordered.value != nullptr) {
       result.value = resulttUnordered.value;
     } else if (resultAVL.value != nullptr) {
@@ -198,12 +167,10 @@ public:
       result.value = nullptr;
     }
 
-    return result; // Возвращаем результат поиска.
+    return result;
   }
 
-  size_t
-  removeALL(const TKey &key) // Удаление записи по ключу сразу в 3 типах таблиц.
-  {
+  size_t removeALL(const TKey &key) {
     size_t opCountUnordered = unorderedTable.remove(key);
     logger.add(unorderedTable.getTableName(), "remove", opCountUnordered);
 
@@ -213,17 +180,13 @@ public:
     size_t opCountHash = hashTable.remove(key);
     logger.add(hashTable.getTableName(), "remove", opCountHash);
 
-    return opCountUnordered + opCountAVL +
-           opCountHash; // Возвращаем количество затраченных операций в сумме.
+    return opCountUnordered + opCountAVL + opCountHash;
   }
 
-  bool is_emptyALL() const // Проверка на пустоту сразу всех таблиц.
-  {
+  bool is_emptyALL() const {
     return (unorderedTable.size() == 0 && avlTable.size() == 0 &&
             hashTable.size() == 0);
   }
 
-  void saveLogs(const std::string &fileName) {
-    logger.writeToFile(fileName); // Сохраняем логи в файл с именем fileName.
-  }
+  void saveLogs(const std::string &fileName) { logger.writeToFile(fileName); }
 };

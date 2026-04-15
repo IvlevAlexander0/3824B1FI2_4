@@ -3,22 +3,17 @@
 #include "BaseTable.h"
 
 template <typename TKey, typename TValue>
-class UnorderedTable
-    : public BaseTable<TKey, TValue> // Неупорядоченная таблица.
-{
+class UnorderedTable : public BaseTable<TKey, TValue> {
 private:
-  using FindResult = typename BaseTable<TKey, TValue>::
-      FindResult; // Псевдоним для удобства использования структуры FindResult
-                  // из базового класса. typename - явно указывает компилятору,
-                  // что FindResult является типом.
+  using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
-  struct TTableRecord // Структура для удобного хранения пар ключ-значение.
-  {
+  struct TTableRecord {
     TKey key;
     TValue value;
   };
 
-  std::vector<TTableRecord> records; // Вектор для хранения записей таблицы.
+  std::vector<TTableRecord> records;
+
 public:
   UnorderedTable() {}
 
@@ -30,114 +25,90 @@ public:
 
   size_t size() const override { return records.size(); }
 
-  TValue &
-  operator[](const size_t index) // Перегруженный оператор [] для удобного
-                                 // доступа к значению записи по индексу.
-  {
-    return records[index].value;
-  }
+  TValue &operator[](const size_t index) { return records[index].value; }
 
   size_t insert(const TKey &key, const TValue &value) override {
-    size_t opCount = 0; // Счётчик количества операций.
+    size_t opCount = 0;
 
-    opCount += 2; // Операция records.size() и присваивание (sizeTable =
-                  // records.size()).
-    size_t sizeTable = records.size(); // Текущий размер таблицы.
+    opCount += 2;
+    size_t sizeTable = records.size();
 
-    opCount++; // Цикл for - size_t i = 0.
+    opCount++;
     for (size_t i = 0; i < sizeTable; ++i) {
-      opCount++; // Цикл for (i < sizeTable).
+      opCount++;
 
-      opCount += 2; // Операции сравнения ключей (records[i].key == key) и
-                    // доступа к records[i].
+      opCount += 2;
       if (records[i].key == key) {
-        opCount += 2; // Операция присваивания (records[i].value = value) и
-                      // операция доступа к records[i].
-        records[i].value =
-            value; // Если ключ найден, то перезаписываем значение.
+        opCount += 2;
+        records[i].value = value;
         return opCount;
       }
 
-      opCount++; // Цикл for (++i).
+      opCount++;
     }
-    opCount++; // Цикл for (i < sizeTable).
+    opCount++;
 
-    opCount++; // Операция вставки новой записи в таблицу (records.push_back({
-               // key, value })).
-    records.push_back({key, value}); // Иначе вставляем новую запись в таблицу.
+    opCount++;
+    records.push_back({key, value});
     return opCount;
   }
 
   FindResult find(const TKey &key) override {
-    size_t opCount = 0; // Счётчик количества операций.
+    size_t opCount = 0;
 
-    FindResult result; // Объект стурктуры для хранения результата поиска.
+    FindResult result;
 
-    opCount += 2; // Операция records.size() и присваивание (sizeTable =
-                  // records.size()).
-    size_t sizeTable = records.size(); // Текущий размер таблицы.
+    opCount += 2;
+    size_t sizeTable = records.size();
 
-    opCount++; // Цикл for - size_t i = 0.
+    opCount++;
     for (size_t i = 0; i < sizeTable; ++i) {
-      opCount++; // Цикл for (i < sizeTable).
+      opCount++;
 
-      opCount += 2; // Операции сравнения ключей (records[i].key == key) и
-                    // доступа к records[i].
+      opCount += 2;
       if (records[i].key == key) {
-        opCount +=
-            3; // Операции присваивания (result.value = &records[i].value),
-               // взятия адреса и доступа к records[i] (&records[i].value)
-        result.value =
-            &records[i].value; // Указатель на значение найденной записи.
+        opCount += 3;
+        result.value = &records[i].value;
 
-        opCount++; // Операция присваивания (result.operationsCount = opCount).
-        result.operationsCount =
-            opCount; // Количество операций, произведённых при поиске записи.
+        opCount++;
+        result.operationsCount = opCount;
 
-        return result; // Возвращаем результат поиска.
+        return result;
       }
 
-      opCount++; // Цикл for (++i).
+      opCount++;
     }
-    opCount++; // Цикл for (i < sizeTable).
+    opCount++;
 
-    opCount++; // Операция присваивания (result.operationsCount = opCount).
-    result.operationsCount = opCount; // Количество операций, произведённых при
-                                      // поиске записи (Но запись не найдена).
-    return result; // Возвращаем результат поиска (Запись не найдена, указатель
-                   // на значение равен nullptr).
+    opCount++;
+    result.operationsCount = opCount;
+    return result;
   }
 
   size_t remove(const TKey &key) override {
-    size_t opCount = 0; // Счётчик количества операций.
+    size_t opCount = 0;
 
-    opCount += 2; // Операция records.size() и присваивание (sizeTable =
-                  // records.size()).
-    size_t sizeTable = records.size(); // Текущий размер таблицы.
+    opCount += 2;
+    size_t sizeTable = records.size();
 
-    opCount++; // Цикл for - size_t i = 0.
+    opCount++;
     for (size_t i = 0; i < sizeTable; ++i) {
-      opCount++; // Цикл for (i < sizeTable).
+      opCount++;
 
-      opCount += 2; // Операции сравнения ключей (records[i].key == key) и
-                    // доступа к records[i].
-      if (records[i].key == key) // Если ключ найден, то удаляем запись.
-      {
-        opCount += 2; // Операции присваивания (records[i] = records[sizeTable -
-                      // 1]) и два доступа (records[i], records[sizeTable - 1]).
-        records[i] =
-            records[sizeTable -
-                    1]; // Копируем последнюю запись на место удаляемой.
+      opCount += 2;
+      if (records[i].key == key) {
+        opCount += 2;
+        records[i] = records[sizeTable - 1];
 
-        opCount++; // Операция удаления последней записи (records.pop_back()).
-        records.pop_back(); // Удаляем последнюю запись из таблицы.
+        opCount++;
+        records.pop_back();
 
         return opCount;
       }
 
-      opCount++; // Цикл for (++i).
+      opCount++;
     }
-    opCount++; // Цикл for (i < sizeTable).
+    opCount++;
 
     return opCount;
   }
