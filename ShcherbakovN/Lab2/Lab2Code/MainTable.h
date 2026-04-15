@@ -10,7 +10,7 @@ private:
   struct InputLogs // Структура данных, подаваемых логгеру на вход при записи
                    // логов.
   {
-    std::string tableName;     // Имя (тип) таблицы.
+    std::string tableName; // Имя (тип) таблицы.
     std::string operationName; // Имя (тип) выполненной операции (метода).
     size_t operationsCount; // Число операций, затраченных на выполнение метода.
   };
@@ -70,7 +70,7 @@ public:
   void
   writeToFile(const std::string &fileName) const // Сохранение логов в файл.
   {
-    std::ofstream fout;  // Создание потока для записи в файл.
+    std::ofstream fout; // Создание потока для записи в файл.
     fout.open(fileName); // Открытие файла для записи с именем fileName. Если
                          // файл не существует - он создастся автоматически.
 
