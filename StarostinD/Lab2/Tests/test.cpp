@@ -201,7 +201,7 @@ TEST(HashTable, UpdateValue) {
 	EXPECT_EQ(*t.find("a"), 999);
 }
 
-TEST(HahsTable, Extract) {
+TEST(HashTable, Extract) {
 	HT t(f);
 
 	t.insert("a", 10);
