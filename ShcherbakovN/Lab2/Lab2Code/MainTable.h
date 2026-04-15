@@ -9,7 +9,8 @@
 #include "HashTable.h"
 #include "UnorderedTable.h"
 
-class LoggingOperations {
+class LoggingOperations
+{
  private:
   struct InputLogs {
     std::string tableName;
@@ -26,7 +27,6 @@ class LoggingOperations {
   size_t totalUnorderedOp;
   size_t totalAVLOp;
   size_t totalHashOp;
-
  public:
   LoggingOperations() {
     totalInsert = 0;
@@ -117,14 +117,14 @@ class LoggingOperations {
   }
 };
 
-template <typename TKey, typename TValue> class MainTable {
+template <typename TKey, typename TValue>
+class MainTable {
  private:
   using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
   UnorderedTable<TKey, TValue> unorderedTable;
   AVLTable<TKey, TValue> avlTable;
   HashTable<TKey, TValue> hashTable;
-
   LoggingOperations logger;
 
  public:
