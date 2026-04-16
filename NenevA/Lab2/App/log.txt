@@ -1,0 +1,90 @@
+ Session started 
+Hash_Table: emplace(first, 12x y z + 5x + 6y) [operations: 20]
+Unordered_Table: emplace(first, 12x y z + 5x + 6y) [operations: 1]
+AVL_Tree: emplace(first, 12x y z + 5x + 6y) [operations: 2]
+Hash_Table: emplace(second, 9x y^5 z^5 + 4x y z + 60y) [operations: 43]
+Unordered_Table: emplace(second, 9x y^5 z^5 + 4x y z + 60y) [operations: 3]
+AVL_Tree: emplace(second, 9x y^5 z^5 + 4x y z + 60y) [operations: 21]
+Hash_Table: print() [operations: 57]
+Unordered_Table: print() [operations: 5]
+AVL_Tree: print() [operations: 28]
+ Statistics 
+Hash_Table: total=57
+Unordered_Table: total=5
+AVL_Tree: total=28
+Hash_Table: emplace(forth, 15x y z + 5y^6 z^7 + 5y z^2) [operations: 75]
+Unordered_Table: emplace(forth, 15x y z + 5y^6 z^7 + 5y z^2) [operations: 8]
+AVL_Tree: emplace(forth, 15x y z + 5y^6 z^7 + 5y z^2) [operations: 94]
+ Final Statistics 
+Hash_Table:
+  emplace: 3 times
+  erase: 0 times
+  find: 0 times
+  print: 1 times
+  Total operations: 75
+Unordered_Table:
+  emplace: 3 times
+  erase: 0 times
+  find: 0 times
+  print: 1 times
+  Total operations: 8
+AVL_Tree:
+  emplace: 3 times
+  erase: 0 times
+  find: 0 times
+  print: 1 times
+  Total operations: 94
+ Session ended 
+ Session started 
+Hash_Table: emplace(first, 5x y^2 z^3 + 15x y z) [operations: 20]
+Unordered_Table: emplace(first, 5x y^2 z^3 + 15x y z) [operations: 1]
+AVL_Tree: emplace(first, 5x y^2 z^3 + 15x y z) [operations: 2]
+Hash_Table: emplace(second, 7x y^2 z^3 + 5x y z + 6y z^2) [operations: 43]
+Unordered_Table: emplace(second, 7x y^2 z^3 + 5x y z + 6y z^2) [operations: 3]
+AVL_Tree: emplace(second, 7x y^2 z^3 + 5x y z + 6y z^2) [operations: 21]
+Hash_Table: emplace(third, 15z + 5) [operations: 61]
+Unordered_Table: emplace(third, 15z + 5) [operations: 6]
+AVL_Tree: emplace(third, 15z + 5) [operations: 72]
+Hash_Table: emplace(forth, 4x y z + 4y + 6) [operations: 79]
+Unordered_Table: emplace(forth, 4x y z + 4y + 6) [operations: 10]
+AVL_Tree: emplace(forth, 4x y z + 4y + 6) [operations: 108]
+Hash_Table: print() [operations: 97]
+Unordered_Table: print() [operations: 14]
+AVL_Tree: print() [operations: 121]
+Hash_Table: find(third) = 15z + 5 [operations: 113]
+Unordered_Table: find(third) = 15z + 5 [operations: 17]
+AVL_Tree: find(third) = 15z + 5 [operations: 129]
+ Statistics 
+Hash_Table: total=113
+Unordered_Table: total=17
+AVL_Tree: total=129
+Hash_Table: emplace(fifth, 10x y^2 z^3 + 30x y z) [operations: 169]
+Unordered_Table: emplace(fifth, 10x y^2 z^3 + 30x y z) [operations: 24]
+AVL_Tree: emplace(fifth, 10x y^2 z^3 + 30x y z) [operations: 179]
+Hash_Table: emplace(sixth, 28x^2 y^3 z^4 + 20x^2 y^2 z^2 + 28x y^3 z^3 + 66x y^2 z^3 + 20x y^2 z + 30x y z + 24y^2 z^2 + 36y z^2) [operations: 224]
+Unordered_Table: emplace(sixth, 28x^2 y^3 z^4 + 20x^2 y^2 z^2 + 28x y^3 z^3 + 66x y^2 z^3 + 20x y^2 z + 30x y z + 24y^2 z^2 + 36y z^2) [operations: 36]
+AVL_Tree: emplace(sixth, 28x^2 y^3 z^4 + 20x^2 y^2 z^2 + 28x y^3 z^3 + 66x y^2 z^3 + 20x y^2 z + 30x y z + 24y^2 z^2 + 36y z^2) [operations: 230]
+ Statistics 
+Hash_Table: total=224
+Unordered_Table: total=36
+AVL_Tree: total=230
+=== Final Statistics ===
+Hash_Table:
+  emplace: 6 times
+  erase: 0 times
+  find: 1 times
+  print: 1 times
+  Total operations: 224
+Unordered_Table:
+  emplace: 6 times
+  erase: 0 times
+  find: 1 times
+  print: 1 times
+  Total operations: 36
+AVL_Tree:
+  emplace: 6 times
+  erase: 0 times
+  find: 1 times
+  print: 1 times
+  Total operations: 230
+ Session ended 
