@@ -1,11 +1,10 @@
 #ifndef TABLE_TABLE_H
 #define TABLE_TABLE_H
-#include <string>
 #include <algorithm>
-#include<iostream>
+#include <iostream>
+#include <string>
 
-template<class T>
-class Table {
+template <class T> class Table {
 public:
 	virtual void insert(const std::string&, const T&) = 0;
 	virtual T* find(const std::string&) = 0;

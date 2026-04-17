@@ -22,7 +22,7 @@ public:
 	void record();
 };
 
-const Polynomial operator * (double, const Polynomial&) ;
+const Polynomial operator * (double, const Polynomial&);
 
 int entering_degree(const char);
 bool chek_deg(int, int);

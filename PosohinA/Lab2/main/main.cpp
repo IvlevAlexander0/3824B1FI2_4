@@ -1,5 +1,4 @@
-#include"../lib_interface/interface.h"
-
+#include "../lib_interface/interface.h"
 
 int main() {
 	InterfaseTable menu;

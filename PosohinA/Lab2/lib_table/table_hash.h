@@ -1,32 +1,26 @@
 #ifndef TABLE_TABLE_HASH_H
-#define	TABLE_TABLE_HASH_H
-#include<vector>
-#include"../lib_table/table.h"
+#define TABLE_TABLE_HASH_H
+#include "../lib_table/table.h"
+#include <vector>
 
-enum class State {
-    EMPTY,
-    OCCUPIED,
-    DELETED
-};
+enum class State { EMPTY, OCCUPIED, DELETED };
 
-template<class T>
-struct NodeHash
-{
+template <class T> struct NodeHash {
     NodeHash();
-    NodeHash(const std::string&,const T&);
-	std::string _key;
-	T _data;
+    NodeHash(const std::string&, const T&);
+    std::string _key;
+    T _data;
     State _now;
 };
 
-template<class T>
-NodeHash<T>::NodeHash() : _now(State::EMPTY) {}
+template <class T> NodeHash<T>::NodeHash() : _now(State::EMPTY) {}
 
-template<class T>
-NodeHash<T>::NodeHash(const std::string& key, const T& data) : _key(key), _data(data), _now(State::OCCUPIED) {}
+template <class T>
+NodeHash<T>::NodeHash(const std::string& key, const T& data)
+    : _key(key), _data(data), _now(State::OCCUPIED) {
+}
 
-template<class T>
-class TableHash : public Table<T> {
+template <class T> class TableHash : public Table<T> {
     std::vector<NodeHash<T>> _table;
     size_t _size;
     int _countOper;
@@ -43,8 +37,7 @@ public:
     int getCountOper() const override;
 };
 
-template<class T>
-size_t TableHash<T>::hash(const std::string& str) {
+template <class T> size_t TableHash<T>::hash(const std::string& str) {
     _countOper++;
     size_t sum = 0;
     _countOper++;
@@ -56,8 +49,7 @@ size_t TableHash<T>::hash(const std::string& str) {
     return sum % _table.size();
 }
 
-template<class T>
-void TableHash<T>::realloc() {
+template <class T> void TableHash<T>::realloc() {
 
     _countOper += 2;
     if (_size < _table.size() * 0.7)
@@ -80,13 +72,12 @@ void TableHash<T>::realloc() {
     _countOper++;
 }
 
-template<class T>
-TableHash<T>::TableHash(size_t raz) : _table(raz), _size(0), _countOper(0) {} 
+template <class T>
+TableHash<T>::TableHash(size_t raz) : _table(raz), _size(0), _countOper(0) {}
 
-template<class T>
-TableHash<T>::~TableHash() { _table.clear(); }
+template <class T> TableHash<T>::~TableHash() { _table.clear(); }
 
-template<class T>
+template <class T>
 void TableHash<T>::insert(const std::string& key, const T& data) {
     realloc();
     size_t index = hash(key);
@@ -94,7 +85,7 @@ void TableHash<T>::insert(const std::string& key, const T& data) {
     _countOper += 3;
     if (_table[index]._now == State::OCCUPIED) {
         size_t temp = index;
-        _countOper+=2;
+        _countOper += 2;
         while (_table[temp]._now == State::OCCUPIED) {
             _countOper += 2;
             if (_table[temp]._key == key) {
@@ -119,8 +110,7 @@ void TableHash<T>::insert(const std::string& key, const T& data) {
     }
 }
 
-template<class T>
-T* TableHash<T>::find(const std::string& key) {
+template <class T> T* TableHash<T>::find(const std::string& key) {
     size_t index = hash(key);
     _countOper++;
 
@@ -137,7 +127,8 @@ T* TableHash<T>::find(const std::string& key) {
         return nullptr;
 
     _countOper += 3;
-    for(int i = (index + 1) % _table.size(); i != index; i = ( i + 1 ) % _table.size()) {
+    for (int i = (index + 1) % _table.size(); i != index;
+        i = (i + 1) % _table.size()) {
         _countOper += 5;
         if (_table[i]._now != State::OCCUPIED)
             continue;
@@ -152,8 +143,7 @@ T* TableHash<T>::find(const std::string& key) {
     return nullptr;
 }
 
-template<class T>
-void TableHash<T>::remove(const std::string& key) {
+template <class T> void TableHash<T>::remove(const std::string& key) {
     size_t index = hash(key);
     _countOper += 3;
     if (_table[index]._now == State::OCCUPIED) {
@@ -166,13 +156,14 @@ void TableHash<T>::remove(const std::string& key) {
         }
     }
     _countOper += 2;
-    if (_table[index]._now == State::EMPTY){ 
+    if (_table[index]._now == State::EMPTY) {
         std::cout << "Element not found" << std::endl;
         return;
     }
 
     _countOper += 3;
-    for (int i = (index + 1) % _table.size(); i != index; i = (i + 1) % _table.size()) {
+    for (int i = (index + 1) % _table.size(); i != index;
+        i = (i + 1) % _table.size()) {
         _countOper += 5;
         if (_table[i]._now != State::OCCUPIED)
             continue;
@@ -184,12 +175,10 @@ void TableHash<T>::remove(const std::string& key) {
             _countOper += 2;
             return;
         }
-
     }
     std::cout << "Element not found" << std::endl;
     return;
 }
 
-template<class T>
-int TableHash<T>::getCountOper() const { return _countOper; }
+template <class T> int TableHash<T>::getCountOper() const { return _countOper; }
 #endif // !TABLE_TABLE_HASH_H

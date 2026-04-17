@@ -1,6 +1,5 @@
+#include "../lib_table/table_AVL.h"
 #include <gtest/gtest.h>
-#include"../lib_table/table_AVL.h"
-
 
 TEST(TableAVLTest, InsertAndFind) {
     TableAVL<int> table;
@@ -19,7 +18,6 @@ TEST(TableAVLTest, InsertAndFind) {
     EXPECT_EQ(*val, 300);
 }
 
-
 TEST(TableAVLTest, insert0) {
     TableAVL<int> table;
 
@@ -30,7 +28,6 @@ TEST(TableAVLTest, insert0) {
     EXPECT_EQ(*val, 999);
 }
 
-
 TEST(TableAVLTest, Find1) {
     TableAVL<int> table;
 
@@ -40,7 +37,6 @@ TEST(TableAVLTest, Find1) {
     int* val = table.find("key3");
     EXPECT_EQ(val, nullptr);
 }
-
 
 TEST(TableAVLTest, Remove1) {
     TableAVL<int> table;
@@ -53,9 +49,7 @@ TEST(TableAVLTest, Remove1) {
     table.remove("key3");
 
     EXPECT_EQ(table.find("key3"), nullptr);
-
 }
-
 
 TEST(TableAVLTest, Remove2) {
     TableAVL<int> table;
@@ -67,14 +61,13 @@ TEST(TableAVLTest, Remove2) {
     table.remove("key2");
 
     EXPECT_EQ(table.find("key2"), nullptr);
-
 }
 
 TEST(TableAVLTest, Remove3) {
     TableAVL<int> table;
 
     table.insert("key1", 100);
-    table.remove("key2");  
+    table.remove("key2");
 
     int* val = table.find("key1");
     ASSERT_NE(val, nullptr);
@@ -100,7 +93,6 @@ TEST(TableAVLTest, SortedInsert) {
         EXPECT_EQ(*val, i);
     }
 }
-
 
 TEST(TableAVLTest, ReverseSorted) {
     TableAVL<int> table;
@@ -203,7 +195,6 @@ TEST(TableAVLRotationTest, SmallLeftTurn) {
     EXPECT_EQ(tree.getKey(right), "30");
 }
 
-
 TEST(TableAVLRotationTest, BigRightTurn) {
     TableAVL<int> tree;
 
@@ -220,7 +211,6 @@ TEST(TableAVLRotationTest, BigRightTurn) {
     auto* right = tree.getRight(root);
     EXPECT_EQ(tree.getKey(right), "30");
 }
-
 
 TEST(TableAVLRotationTest, BigLeftTurn) {
     TableAVL<int> tree;

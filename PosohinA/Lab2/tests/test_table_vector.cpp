@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include"../lib_table/table_vector.h"
+#include "../lib_table/table_vector.h"
 
 TEST(TableVectorTest, InsertFind) {
     TableVector<int> table;

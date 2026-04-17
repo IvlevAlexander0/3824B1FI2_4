@@ -2,12 +2,10 @@
 #define INTERFACE_INTERFACE_H
 
 #include "../lib_polynomial/polynomial.h"
-#include"../lib_table/table.h"
-#include"../lib_table/table_AVL.h"
-#include"../lib_table/table_hash.h"
-#include"../lib_table/table_vector.h"
-
-
+#include "../lib_table/table.h"
+#include "../lib_table/table_AVL.h"
+#include "../lib_table/table_hash.h"
+#include "../lib_table/table_vector.h"
 
 class InterfacePol {
 	Polynomial Pol1;
@@ -19,13 +17,12 @@ public:
 
 	void input_polyn();
 	void actions();
-	Polynomial sum()const;
-	Polynomial sub()const;
-	Polynomial mul()const;
-	Polynomial sum2()const;
-	Polynomial sub2()const;
+	Polynomial sum() const;
+	Polynomial sub() const;
+	Polynomial mul() const;
+	Polynomial sum2() const;
+	Polynomial sub2() const;
 };
-
 
 class InterfaseTable {
 	Table<Polynomial>* _table;

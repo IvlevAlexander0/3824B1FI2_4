@@ -1,6 +1,5 @@
-#include <gtest/gtest.h>
 #include "../lib_table/table_hash.h"
-
+#include <gtest/gtest.h>
 
 TEST(TableHashTest, InsertFind1) {
     TableHash<int> table;
@@ -18,7 +17,6 @@ TEST(TableHashTest, InsertFind1) {
     val = table.find("key3");
     EXPECT_EQ(*val, 300);
 }
-
 
 TEST(TableHashTest, UpdateKey1) {
     TableHash<int> table;
@@ -39,7 +37,6 @@ TEST(TableHashTest, FindNonExis1) {
     int* val = table.find("key3");
     EXPECT_EQ(val, nullptr);
 }
-
 
 TEST(TableHashTest, Remove1) {
     TableHash<int> table;
@@ -86,11 +83,11 @@ TEST(TableHashTest, Empty1) {
     TableHash<int> table;
 
     EXPECT_EQ(table.find("anything"), nullptr);
-    table.remove("anything"); 
+    table.remove("anything");
 }
 
 TEST(TableHashTest, Rehash1) {
-    TableHash<int> table(4); 
+    TableHash<int> table(4);
 
     for (int i = 0; i < 500; i++) {
         table.insert("key_" + std::to_string(i), i);
@@ -101,7 +98,6 @@ TEST(TableHashTest, Rehash1) {
         EXPECT_EQ(*val, i);
     }
 }
-
 
 TEST(TableHashTest, KeyLengths1) {
     TableHash<int> table;
@@ -116,7 +112,6 @@ TEST(TableHashTest, KeyLengths1) {
     EXPECT_EQ(*table.find("aaa"), 3);
     EXPECT_EQ(*table.find("aaaa"), 4);
 }
-
 
 TEST(TableHashTest, EmptyKey1) {
     TableHash<int> table;

@@ -1,25 +1,23 @@
-#include <gtest/gtest.h>
 #include "../lib_polynomial/polynomial.h"
+#include <gtest/gtest.h>
 
-TEST(Test_Polynomial, test_constructor1) {
-	ASSERT_NO_THROW(Polynomial A);
-}
+TEST(Test_Polynomial, test_constructor1) { ASSERT_NO_THROW(Polynomial A); }
 
 TEST(Test_Polynomial, test_sum_numb) {
 	EXPECT_EQ(sum_numb(123), 6);
 	EXPECT_EQ(sum_numb(684), 18);
 }
 
-//TEST(Test_Polynomial, test_record) {
-//	Polynomial A;
-//	List B;
-//	A.record(); // нужно вводить такие цифры 4 2 0 0	-9 2 3 7	 6 0 0 3	
-//	B.push_back(std::pair<double, int>{-9, 237});
-//	B.push_back(std::pair<double, int>{6, 003});
-//	B.push_back(std::pair<double, int>{4, 200});
-//	Polynomial C(B);
-//	EXPECT_EQ(A, C);
-//}
+ TEST(Test_Polynomial, test_record) {
+	Polynomial A;
+	List B;
+	A.record(); // нужно вводить такие цифры 4 2 0 0	-9 2 3 7 6 0 0 3 	
+	B.push_back(std::pair<double, int>{-9, 237});
+	B.push_back(std::pair<double, int>{6, 003});
+	B.push_back(std::pair<double, int>{4, 200});
+	Polynomial C(B);
+	EXPECT_EQ(A, C);
+ }
 
 TEST(Test_Polynomial, test_summ) {
 	Polynomial D;
@@ -28,10 +26,9 @@ TEST(Test_Polynomial, test_summ) {
 	A.push_back(std::pair<double, int>{6, 3});
 	A.push_back(std::pair<double, int>{4, 200});
 
-
 	C.push_back(std::pair<double, int>{5, 160});
-	C.push_back(std::pair<double, int>{-6, 102}); 
-	
+	C.push_back(std::pair<double, int>{-6, 102});
+
 	B.push_back(std::pair<double, int>{-9, 237});
 	B.push_back(std::pair<double, int>{5, 160});
 	B.push_back(std::pair<double, int>{-6, 102});
@@ -50,7 +47,6 @@ TEST(Test_Polynomial, test_sub) {
 	A.push_back(std::pair<double, int>{-9, 237});
 	A.push_back(std::pair<double, int>{6, 3});
 	A.push_back(std::pair<double, int>{4, 200});
-
 
 	C.push_back(std::pair<double, int>{5, 160});
 	C.push_back(std::pair<double, int>{-6, 102});
