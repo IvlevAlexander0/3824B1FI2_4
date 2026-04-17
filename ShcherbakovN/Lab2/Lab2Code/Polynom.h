@@ -39,7 +39,6 @@ class Forward_list_with_f_head {
   void push_front(double coeff_, size_t deg_);
 
   friend class Polynomial;
-
  public:
   Forward_list_with_f_head();
 
@@ -63,7 +62,6 @@ class Forward_list_with_f_head {
 
 class Polynomial {
   Forward_list_with_f_head polynom;
-
  public:
   Polynomial();
 

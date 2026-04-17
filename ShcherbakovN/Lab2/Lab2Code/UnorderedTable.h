@@ -16,7 +16,6 @@ class UnorderedTable : public BaseTable<TKey, TValue> {
   };
 
   std::vector<TTableRecord> records;
-
  public:
   UnorderedTable() {}
 

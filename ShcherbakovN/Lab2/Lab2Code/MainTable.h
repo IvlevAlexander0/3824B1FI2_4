@@ -25,7 +25,6 @@ class LoggingOperations {
   size_t totalUnorderedOp;
   size_t totalAVLOp;
   size_t totalHashOp;
-
  public:
   LoggingOperations() {
     totalInsert = 0;
@@ -122,9 +121,7 @@ template <typename TKey, typename TValue> class MainTable {
   UnorderedTable<TKey, TValue> unorderedTable;
   AVLTable<TKey, TValue> avlTable;
   HashTable<TKey, TValue> hashTable;
-
   LoggingOperations logger;
-
  public:
   MainTable() {}
 

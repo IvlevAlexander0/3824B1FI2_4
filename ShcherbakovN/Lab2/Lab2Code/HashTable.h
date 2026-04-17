@@ -109,7 +109,6 @@ class HashTable : public BaseTable<TKey, TValue> {
     table_lists = new_table_lists;
     sizeTable = newSizeTable;
   }
-
  public:
   explicit HashTable(size_t sizeTable_ = 10, double loadFactor_ = 0.75) {
     if (loadFactor_ < 0 || std::fabs(loadFactor_) < EPSILON) {
