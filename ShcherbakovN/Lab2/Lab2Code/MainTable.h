@@ -10,7 +10,6 @@
 #include "UnorderedTable.h"
 
 class LoggingOperations {
- private:
   struct InputLogs {
     std::string tableName;
     std::string operationName;
@@ -118,7 +117,6 @@ class LoggingOperations {
 };
 
 template <typename TKey, typename TValue> class MainTable {
- private:
   using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
   UnorderedTable<TKey, TValue> unorderedTable;

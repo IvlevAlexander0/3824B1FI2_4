@@ -8,7 +8,6 @@
 
 template <typename TKey, typename TValue>
 class UnorderedTable : public BaseTable<TKey, TValue> {
- private:
   using FindResult = typename BaseTable<TKey, TValue>::FindResult;
 
   struct TTableRecord {
