@@ -280,6 +280,7 @@ class AVLTable : public BaseTable<TKey, TValue> {
 
     delete node_;
   }
+
  public:
   AVLTable() : root(nullptr), NodeCount(0) {}
 

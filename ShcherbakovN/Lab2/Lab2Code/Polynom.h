@@ -62,6 +62,7 @@ class Forward_list_with_f_head {
 
 class Polynomial {
   Forward_list_with_f_head polynom;
+
  public:
   Polynomial();
 
