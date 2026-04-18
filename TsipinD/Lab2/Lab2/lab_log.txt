@@ -1,0 +1,14 @@
+=== Table Operations Log ===
+
+Operation: INSERT | Key: a
+Unordered    -> Equals: 0     | comparisons: 0     | Assign: 1    
+Ordered      -> Equals: 0     | comparisons: 0     | Assign: 1    
+AVL Tree     -> Equals: 0     | comparisons: 0     | Assign: 1    
+Hash Table   -> Equals: 0     | comparisons: 0     | Assign: 1    
+--------------------------------------------------
+
+=== FINAL SUMMARY (Total Operations) ===
+Unordered Table: Total Equals=0, Total comparisons=0, Total Assign=1
+Ordered Table: Total Equals=0, Total comparisons=0, Total Assign=1
+AVL Tree Table: Total Equals=0, Total comparisons=0, Total Assign=1
+Hash Table: Total Equals=0, Total comparisons=0, Total Assign=1
