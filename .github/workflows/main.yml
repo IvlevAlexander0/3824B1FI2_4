@@ -1,12 +1,11 @@
 name: pull_request_check
 
 on:
-  pull_request:
-    branches: [ "*" ]
-    types: [opened, edited]
+  push:
+    branches: [ main, master, develop ]
   pull_request_target:
     branches: [ "*" ]
-    types: [opened, edited]
+    types: [ opened, synchronize, edited ]
 
 permissions:
   contents: read
@@ -16,11 +15,171 @@ permissions:
   checks: write
 
 jobs:
-  labeler:
-    name: labeler
+  code-style:
+    name: Formatting & Linting
     runs-on: ubuntu-latest
     steps:
-      - name: labeler
-        uses: fuxingloh/multi-labeler@v4
+      - name: Get PR commit message for skip check
+        id: pr-commit-message
+        uses: actions/github-script@v7
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            const { data: commits } = await github.rest.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              per_page: 100
+            });
+            const lastCommit = commits[commits.length - 1];
+            const message = lastCommit.commit.message;
+            core.setOutput('message', message);
+            core.setOutput('skip', /\[skip-format\]/.test(message));
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+
+      - name: Set skip flag
+        id: skip
+        run: |
+          if [[ "${{ steps.pr-commit-message.outputs.skip }}" == "true" ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+          else
+            echo "skip=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Get changed files
+        id: changed-files
+        if: steps.skip.outputs.skip == 'false'
+        uses: tj-actions/changed-files@v44
+        with:
+          files: |
+            **/*.cpp
+            **/*.h
+            **/*.hpp
+            **/*.c
+            **/*.cc
+            **/*.cxx
+          separator: ","
+
+      - name: Install tools
+        if: steps.skip.outputs.skip == 'false' && steps.changed-files.outputs.any_changed == 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang-format python3-pip
+          pip3 install cpplint
+
+      - name: Run clang-format
+        id: clang-format
+        if: steps.skip.outputs.skip == 'false' && steps.changed-files.outputs.any_changed == 'true'
+        continue-on-error: true
+        run: |
+          ERROR_COUNT=0
+          UNFORMATTED_FILES=""
+          declare -A PR_COMMENT_MAP
+          IFS=',' read -ra CHANGED_FILES <<< "${{ steps.changed-files.outputs.all_changed_files }}"
+          for file in "${CHANGED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              continue
+            fi
+            if ! clang-format -n -Werror "$file" 2>clang_output.tmp; then
+              ERROR_COUNT=$((ERROR_COUNT + 1))
+              UNFORMATTED_FILES="$UNFORMATTED_FILES\n- $file"
+              while IFS= read -r error_line; do
+                if echo "$error_line" | grep -q "code should be clang-formatted"; then
+                  LINE_NUM=$(echo "$error_line" | grep -o ":[0-9]*:" | head -1 | tr -d ':')
+                  key="$file:$LINE_NUM"
+                  if [[ -z "${PR_COMMENT_MAP[$key]}" ]]; then
+                    ORIG_LINE=$(sed -n "${LINE_NUM}p" "$file")
+                    FIX_LINE=$(clang-format "$file" | sed -n "${LINE_NUM}p")
+                    PR_COMMENT_MAP[$key]="- **$file:$LINE_NUM**\n\`\`\`diff\n- $ORIG_LINE\n+ $FIX_LINE\n\`\`\`"
+                  fi
+                fi
+              done < clang_output.tmp
+            fi
+          done
+          PR_COMMENT=""
+          for entry in "${PR_COMMENT_MAP[@]}"; do
+            if [ -z "$PR_COMMENT" ]; then
+              PR_COMMENT="$entry"
+            else
+              PR_COMMENT="$PR_COMMENT\n\n$entry"
+            fi
+          done
+          echo "ERROR_COUNT=$ERROR_COUNT" >> $GITHUB_OUTPUT
+          echo "UNFORMATTED_FILES<<EOF" >> $GITHUB_OUTPUT
+          printf "%b\n" "$UNFORMATTED_FILES" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          printf "%b" "$PR_COMMENT" > clang_comment.txt
+          if [ $ERROR_COUNT -gt 0 ]; then
+            echo "CLANG_FORMAT_FAILED=true" >> $GITHUB_OUTPUT
+          else
+            echo "CLANG_FORMAT_FAILED=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run cpplint
+        id: cpplint
+        if: steps.skip.outputs.skip == 'false' && steps.changed-files.outputs.any_changed == 'true'
+        continue-on-error: true
+        run: |
+          IFS=',' read -ra CHANGED_FILES <<< "${{ steps.changed-files.outputs.all_changed_files }}"
+          CPPLINT_ERRORS=""
+          CPPLINT_FAILED=false
+          for file in "${CHANGED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              continue
+            fi
+            OUTPUT=$(cpplint --filter=-build/c++11,-build/c++14,-runtime/references --verbose=0 "$file" 2>&1) || CPPLINT_FAILED=true
+            if [ -n "$OUTPUT" ]; then
+              CPPLINT_ERRORS="$CPPLINT_ERRORS\n\n### $file\n\`\`\`\n$OUTPUT\n\`\`\`"
+            fi
+          done
+          echo "CPPLINT_FAILED=$CPPLINT_FAILED" >> $GITHUB_OUTPUT
+          # Сохраняем ошибки в файл
+          printf "%b" "$CPPLINT_ERRORS" > cpplint_errors.txt
+
+      - name: Comment PR on errors
+        if: github.event_name == 'pull_request_target' && (steps.clang-format.outputs.CLANG_FORMAT_FAILED == 'true' || steps.cpplint.outputs.CPPLINT_FAILED == 'true')
+        run: |
+          {
+            echo "Code style issues found"
+            echo
+            if [ -s clang_comment.txt ]; then
+              echo "### Formatting errors (clang-format)"
+              echo
+              cat clang_comment.txt
+              echo
+            fi
+            if [ -s cpplint_errors.txt ]; then
+              echo "### Linting errors (cpplint)"
+              echo
+              cat cpplint_errors.txt
+            fi
+          } > comment_body.txt
+          head -c 65535 comment_body.txt > comment_body_trunc.txt
+          gh pr comment ${{ github.event.pull_request.number }} --body-file comment_body_trunc.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Fail if any linter failed
+        if: steps.clang-format.outputs.CLANG_FORMAT_FAILED == 'true' || steps.cpplint.outputs.CPPLINT_FAILED == 'true'
+        run: exit 1
+
+      - name: Success comment on PR
+        if: github.event_name == 'pull_request_target' && success() && steps.changed-files.outputs.any_changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: 'Code style check passed. All changed files are properly formatted and pass cpplint.'
+            });
+
+      - name: Skip message
+        if: steps.skip.outputs.skip == 'false' && steps.changed-files.outputs.any_changed == 'false'
+        run: echo "No C++ files changed – skipping code style check."
