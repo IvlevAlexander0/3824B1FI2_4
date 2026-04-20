@@ -52,6 +52,10 @@ public:
 		findOperationsCnt = insertOperationsCnt = eraseOperationsCnt = extractOperationsCnt = 0;
 	}
 
+	std::string getType() {
+		return tableType;
+	}
+
 	virtual ~Table() {
 		file << "\nTotal number of operations in " << tableType << ":\n";
 		file << "1. Find: " << findOperationsCnt << '\n';

@@ -159,7 +159,7 @@ private:
 						leftRotate(x, t);
 						this->insertOperationsCnt += 3;
 					}
-					x->parent->color = 0;
+					x->parent->color = 0;		// case 3
 					x->parent->parent->color = 1;
 					rightRotate(x->parent->parent, t);
 					
@@ -207,7 +207,7 @@ private:
 				Node* w = x->parent->right;
 
 				this->eraseOperationsCnt += 5;
-				if (w->color == 1) {
+				if (w->color == 1) {  // case 1
 					w->color = 0;
 					x->parent->color = 1;
 					leftRotate(x->parent, t);
@@ -216,21 +216,21 @@ private:
 				}
 
 				this->eraseOperationsCnt += 7;
-				if (w->left->color == 0 && w->right->color == 0) {
+				if (w->left->color == 0 && w->right->color == 0) {  // case 2
 					w->color = 1;
 					x = x->parent;
 					this->eraseOperationsCnt += 4;
 				}
 				else {
 					this->eraseOperationsCnt += 3;
-					if (w->right->color == 0) {
+					if (w->right->color == 0) {  // case 3
 						w->left->color = 0;
 						w->color = 1;
 						rightRotate(w, t);
 						w = x->parent->right;
 						this->eraseOperationsCnt += 10;
 					}
-					w->color = x->parent->color;
+					w->color = x->parent->color; // case 4
 					x->parent->color = 0;
 					w->right->color = 0;
 					leftRotate(x->parent, t);
@@ -330,6 +330,13 @@ private:
 			   checkNode(node->right, blackCount, expectedBlackHeight);
 	}
 
+	void clear(Node* x) {
+		if (x == NIL) return;
+		clear(x->left);
+		clear(x->right);
+		delete x;
+	}
+
 public:
 	rb_tree(std::ofstream& file) : Table<T>(file) {
 		if (NIL == nullptr) {
@@ -372,6 +379,7 @@ public:
 		else {
 			this->insertOperationsCnt += 2;
 			if (key == parent->key) {
+				parent->data = data;
 				this->file << this->tableType << "insert: " << this->insertOperationsCnt - t << '\n';
 				return;
 			}
@@ -463,13 +471,6 @@ public:
 
 		this->eraseOperationsCnt += f;
 		this->file << this->tableType << "erase: " << this->eraseOperationsCnt - t  << '\n';
-	}
-
-	void clear(Node* x) {
-		if (x == NIL) return;
-		clear(x->left);
-		clear(x->right);
-		delete x;
 	}
 
 	bool isValidRBTree() {

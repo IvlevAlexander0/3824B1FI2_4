@@ -216,8 +216,6 @@ TEST(HashTable, Extract) {
 
 TEST(HashTable, StressTest) {
 	HT t(1000, f);
-	default_random_engine re;
-	uniform_int_distribution<> op(0, 3);
 
 	const int NUM = 1000;
 	vector<P> ps(NUM);
@@ -268,7 +266,7 @@ TEST(RBTree, BasicInsertFind) {
 	EXPECT_EQ(t.find("x"), nullptr);
 }
 
-TEST(RBTree, duplicate) {
+TEST(RBTree, UpdateValue) {
 	RB t(f);
 	t.insert("A", 1);
 	t.insert("A", 2);
@@ -277,7 +275,7 @@ TEST(RBTree, duplicate) {
 	auto* val = t.find("A");
 
 	ASSERT_NE(val, nullptr);
-	EXPECT_EQ(*val, 1);
+	EXPECT_EQ(*val, 3);
 
 	EXPECT_TRUE(t.isValidRBTree());
 }
