@@ -7,8 +7,8 @@ private:
 	struct Node {
 		std::string key;
 		T data;
-		int next = -1;
-		Node(const std::string& key, const T& data, int next): key(key), data(data), next(next) {}
+		int next;
+		Node(const std::string& key, const T& data, int next = -1): key(key), data(data), next(next) {}
 	};
 	
 	const size_t CAPACITY;
@@ -51,9 +51,9 @@ private:
 	}
 
 public:
-	hash_table(size_t capasity, std::ofstream& file) : CAPACITY(capasity), size(0), buckets(capasity, -1), Table<T>(file) {
+	hash_table(size_t capacity, std::ofstream& file) : CAPACITY(capacity), size(0), buckets(capacity, -1), Table<T>(file) {
 		this->tableType = "Hash Table";
-		nodes.reserve(capasity);
+		nodes.reserve(capacity);
 	}
 
 	hash_table(std::ofstream& file) : hash_table(100, file) {}
@@ -121,7 +121,7 @@ public:
 				nodes[pos].next = nodes.size();
 				this->insertOperationsCnt += 5;
 			}
-			nodes.emplace_back(key, data, -1);
+			nodes.emplace_back(key, data);
 			this->insertOperationsCnt += 4;
 		}
 

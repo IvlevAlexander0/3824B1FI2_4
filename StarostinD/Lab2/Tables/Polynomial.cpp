@@ -14,11 +14,11 @@ Polynomial::Monomial::Monomial(std::string src) : coef(1.), degs(0) {
 	int i = 0;
 	switch (SZ) {
 		default:
-			for (; i < SZ - 3; ++i) {
-				if (!isdigit(src[i]) && src[i] != '-' && src[i] != '+' && src[i] != '.') {
-					throw std::invalid_argument("The coefficient must be a real number");
-				}
+		for (; i < SZ - 3; ++i) {
+			if (!isdigit(src[i]) && src[i] != '-' && src[i] != '+' && src[i] != '.') {
+				throw std::invalid_argument("The coefficient must be a real number");
 			}
+		}
 		case 3:
 			for (; i < SZ; ++i) {
 				if (!isdigit(src[i])) {
