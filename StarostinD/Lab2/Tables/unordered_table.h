@@ -7,18 +7,18 @@ private:
 	struct Record {
 		std::string key;
 		T data;
-		Record(const std::string key, const T& data): key(key), data(data) {}
+		Record(const std::string key, const T &data): key(key), data(data) {}
 	};
 
 	std::vector<Record> table;
 public:
-	unordered_table(const size_t capacity, std::ofstream& file): Table<T>(file) {
+	unordered_table(const size_t capacity, std::ofstream &file): Table<T>(file) {
 		this->tableType = "Unordered Table";
 		table.reserve(capacity);
 	}
-	unordered_table(std::ofstream& file) : unordered_table(100, file) {}
+	unordered_table(std::ofstream &file) : unordered_table(100, file) {}
 
-	T* find(const std::string& key) override {
+	T* find(const std::string &key) override {
 		int t = this->findOperationsCnt;
 		const size_t SZ = table.size();
 		this->findOperationsCnt+= 5;
@@ -36,7 +36,7 @@ public:
 		return nullptr;
 	}
 
-	void insert(const std::string& key, const T& data) override {
+	void insert(const std::string &key, const T &data) override {
 		int t = this->findOperationsCnt, k = this->insertOperationsCnt;
 		T* elem = find(key);
 		this->file << this->tableType << "find: " << this->findOperationsCnt - t << '\n';
@@ -55,7 +55,7 @@ public:
 		return;
 	}
 
-	void erase(const std::string& key) override {
+	void erase(const std::string &key) override {
 		int t = this->eraseOperationsCnt;
 		const size_t SZ = table.size();
 		this->eraseOperationsCnt += 5;
@@ -74,7 +74,7 @@ public:
 		this->file << this->tableType << "erase: " << this->eraseOperationsCnt - t << '\n';
 	}
 
-	bool extract(const std::string& key, T& out) override {
+	bool extract(const std::string &key, T &out) override {
 		int t = this->extractOperationsCnt;
 		const size_t SZ = table.size();
 		this->extractOperationsCnt += 5;
