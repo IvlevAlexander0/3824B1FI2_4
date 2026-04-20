@@ -19,7 +19,7 @@ public:
 	unordered_table(std::ofstream &file) : unordered_table(100, file) {}
 
 	T *find(const std::string &key) override {
-		int t = this->findOperationsCnt;
+		size_t t = this->findOperationsCnt;
 		const size_t SZ = table.size();
 		this->findOperationsCnt += 5;
 		for (size_t i = 0; i < SZ; ++i) {
@@ -37,7 +37,7 @@ public:
 	}
 
 	void insert(const std::string &key, const T &data) override {
-		int t = this->findOperationsCnt, k = this->insertOperationsCnt;
+		size_t t = this->findOperationsCnt, k = this->insertOperationsCnt;
 		T* elem = find(key);
 		this->file << this->tableType << " find: " << this->findOperationsCnt - t << '\n';
 		this->insertOperationsCnt += 3 + this->findOperationsCnt - t;
@@ -56,7 +56,7 @@ public:
 	}
 
 	void erase(const std::string &key) override {
-		int t = this->eraseOperationsCnt;
+		size_t t = this->eraseOperationsCnt;
 		const size_t SZ = table.size();
 		this->eraseOperationsCnt += 5;
 		for (size_t i = 0; i < SZ; ++i) {
@@ -75,7 +75,7 @@ public:
 	}
 
 	bool extract(const std::string &key, T &out) override {
-		int t = this->extractOperationsCnt;
+		size_t t = this->extractOperationsCnt;
 		const size_t SZ = table.size();
 		this->extractOperationsCnt += 5;
 

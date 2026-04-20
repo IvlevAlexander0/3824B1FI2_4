@@ -347,7 +347,7 @@ public:
 	}
 
 	T* find(const std::string& key) override {
-		int t = this->findOperationsCnt;
+		size_t t = this->findOperationsCnt;
 		Node* search_res = find(root, key);
 		this->findOperationsCnt += 4;
 		if (search_res == NIL) {
@@ -360,11 +360,11 @@ public:
 	}
 
 	void insert(const std::string& key, const T& data) override {
-		int t = this->insertOperationsCnt;
+		size_t t = this->insertOperationsCnt;
 		
 		Node* newNode;
 
-		int f = this->findOperationsCnt;
+		size_t f = this->findOperationsCnt;
 		Node* parent = findParent(root, key);
 		this->file << this->tableType << " find: " << this->findOperationsCnt - f << '\n';
 		t -= this->findOperationsCnt - f;
@@ -403,9 +403,9 @@ public:
 	}
 
 	void erase(const std::string& key) override {
-		int t = this->eraseOperationsCnt;
+		size_t t = this->eraseOperationsCnt;
 
-		int f = this->findOperationsCnt;
+		size_t f = this->findOperationsCnt;
 		Node* x = find(root, key); // удаляемый узел
 		this->file << this->tableType << " find: " << this->findOperationsCnt - f << '\n';
 

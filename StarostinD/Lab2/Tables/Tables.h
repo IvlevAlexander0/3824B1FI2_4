@@ -17,7 +17,7 @@ public:
 	virtual void insert(const std::string& key, const T& data) = 0;
 	virtual void erase(const std::string& key) = 0;
 	virtual bool extract(const std::string& key, T& out) {
-		int t = findOperationsCnt;
+		size_t t = findOperationsCnt;
 		T* val = find(key);
 		file << tableType << " find: " << findOperationsCnt - t << '\n';
 		
