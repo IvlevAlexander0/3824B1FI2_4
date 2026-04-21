@@ -1,152 +1,117 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <vector>   
+#include <vector>
 #include <algorithm>
-#include <sstream>  
-#include <cmath>    
+#include <sstream>
+#include <cmath>
 #include <stdexcept>
+
 struct Monomial {
-    double Coefficient;
-    int Degrees;
-    Monomial() : Coefficient(0), Degrees(0) {};
-    Monomial(double C, int D) : Coefficient(C), Degrees(D) {};
-    bool operator<(const Monomial& other) const { return Degrees > other.Degrees; }
-    bool operator==(const Monomial& other) const { return Degrees == other.Degrees && std::fabs(Coefficient - other.Coefficient) < 0.000001; }
-    bool operator!=(const Monomial& other) const { return !(*this == other); }
+  double coefficient;
+  int degrees;
+  Monomial() : coefficient(0), degrees(0) {}
+  Monomial(double c, int d) : coefficient(c), degrees(d) {}
+  bool operator<(const Monomial& other) const {
+    return degrees > other.degrees;
+  }
+  bool operator==(const Monomial& other) const {
+    return degrees == other.degrees &&
+           std::fabs(coefficient - other.coefficient) < 0.000001;
+  }
+  bool operator!=(const Monomial& other) const { return !(*this == other); }
 };
 
 struct Node {
-    Monomial Elem;
-    Node* next;
-    Node(Monomial M) : Elem(M), next(nullptr) {};
-    ~Node() = default;
+  Monomial elem;
+  Node* next;
+  explicit Node(const Monomial& m) : elem(m), next(nullptr) {}
+  ~Node() = default;
 };
 
-class my_list {
-private:
-    Node* head;
-    Node* tail;
-    size_t _size;
+class MyList {
+ public:
+  class Iterator {
+   public:
+    explicit Iterator(Node* ptr = nullptr) : current_node_(ptr) {}
+    Monomial& operator*() const { return current_node_->elem; }
+    Monomial* operator->() const { return &(current_node_->elem); }
+    Iterator& operator++() {
+      if (current_node_) current_node_ = current_node_->next;
+      return *this;
+    }
+    bool operator==(const Iterator& other) const {
+      return current_node_ == other.current_node_;
+    }
+    bool operator!=(const Iterator& other) const {
+      return current_node_ != other.current_node_;
+    }
 
-public:
-    class iterator {
-    private:
-        Node* current_node;
-        friend class my_list;
-    public:
-        explicit iterator(Node* ptr = nullptr);
-        Monomial& operator*() const;
-        Monomial* operator->() const;
-        iterator& operator++();
-        bool operator==(const iterator& other) const;
-        bool operator!=(const iterator& other) const;
-    };
+   private:
+    Node* current_node_;
+    friend class MyList;
+  };
 
-    class const_iterator {
-    private:
-        const Node* current_node;
-        friend class my_list;
-    public:
-        explicit const_iterator(const Node* ptr = nullptr);
-        const Monomial& operator*() const;
-        const Monomial* operator->() const;
-        const_iterator& operator++();
-        bool operator==(const const_iterator& other) const;
-        bool operator!=(const const_iterator& other) const;
-    };
+  class ConstIterator {
+   public:
+    explicit ConstIterator(const Node* ptr = nullptr) : current_node_(ptr) {}
+    const Monomial& operator*() const { return current_node_->elem; }
+    const Monomial* operator->() const { return &(current_node_->elem); }
+    ConstIterator& operator++() {
+      if (current_node_) current_node_ = current_node_->next;
+      return *this;
+    }
+    bool operator==(const ConstIterator& other) const {
+      return current_node_ == other.current_node_;
+    }
+    bool operator!=(const ConstIterator& other) const {
+      return current_node_ != other.current_node_;
+    }
 
+   private:
+    const Node* current_node_;
+    friend class MyList;
+  };
 
-    my_list();
-    ~my_list();
-    my_list(const my_list& other);
-    my_list& operator=(my_list other);
-    bool empty() const;
-    size_t size() const;
-    void clear();
-    void emplace_back(Monomial M);
-    void emplace_back(double c, int d);
-    void sort();
+  MyList();
+  ~MyList();
+  MyList(const MyList& other);
+  MyList& operator=(MyList other);
+  bool empty() const;
+  size_t size() const;
+  void clear();
+  void EmplaceBack(const Monomial& m);
+  void EmplaceBack(double c, int d);
+  void Sort();
 
+  Iterator begin() { return Iterator(head_); }
+  Iterator end() { return Iterator(nullptr); }
+  ConstIterator begin() const { return ConstIterator(head_); }
+  ConstIterator end() const { return ConstIterator(nullptr); }
 
-    iterator begin();
-    iterator end();
-
-    const_iterator begin() const;
-    const_iterator end() const;
+ private:
+  Node* head_;
+  Node* tail_;
+  size_t size_;
 };
 
 class Polinomial {
-private:
-    my_list Data;
-public:
-    void simplify();
-    Polinomial() {};
-    Polinomial(const Polinomial& other);
-    Polinomial(const std::string s);
-    bool operator==(const Polinomial& other) const;
-    bool operator!=(const Polinomial& other) const;
-    Polinomial& operator=(const Polinomial& other);
-    Polinomial operator+(const Polinomial& other) const;
-    Polinomial operator-(const Polinomial& other) const;
-    Polinomial operator*(const Polinomial& other) const;
-    Polinomial operator*(const double Mult);
+ public:
+  Polinomial() = default;
+  Polinomial(const Polinomial& other);
+  explicit Polinomial(const std::string& s);
+  bool operator==(const Polinomial& other) const;
+  bool operator!=(const Polinomial& other) const;
+  Polinomial& operator=(const Polinomial& other);
+  Polinomial operator+(const Polinomial& other) const;
+  Polinomial operator-(const Polinomial& other) const;
+  Polinomial operator*(const Polinomial& other) const;
+  Polinomial operator*(double mult) const;
 
-    friend std::ostream& operator <<(std::ostream& out, const Polinomial& P) {
-        if (P.Data.empty()) return out << "0";
-        bool firstTerm = true;
+  friend std::ostream& operator<<(std::ostream& out, const Polinomial& p);
+  friend std::istream& operator>>(std::istream& in, Polinomial& p);
 
-        for (my_list::const_iterator it = P.Data.begin(); it != P.Data.end(); ++it) {
-            const Monomial& m = *it;
-            if (std::fabs(m.Coefficient) < 0.000001) {
-                continue;
-            }
-            if (!firstTerm) {
-                if (m.Coefficient > 0) {
-                    out << " + ";
-                }
-                else {
-                    out << " - ";
-                }
-            }
-            else if (m.Coefficient < 0) {
-                out << "-";
-            }
-            double absCoeff = std::fabs(m.Coefficient);
-            if (m.Degrees == 0 || std::fabs(absCoeff - 1.0) > 0.000001) {
-                out << absCoeff;
-            }
-            int degX = m.Degrees / 100;
-            int degY = (m.Degrees / 10) % 10;
-            int degZ = m.Degrees % 10;
-            bool hasVariable = false;
-
-            if (degX > 0) {
-                out << "x";
-                if (degX > 1) out << "^" << degX;
-                hasVariable = true;
-            }
-            if (degY > 0) {
-                if (hasVariable) out << " ";
-                out << "y";
-                if (degY > 1) out << "^" << degY;
-                hasVariable = true;
-            }
-            if (degZ > 0) {
-                if (hasVariable) out << " ";
-                out << "z";
-                if (degZ > 1) out << "^" << degZ;
-                hasVariable = true;
-            }
-            firstTerm = false;
-        }
-        return out;
-
-    }
-
-    friend std::istream& operator>>(std::istream& in, Polinomial& P) {
-        std::string input;
-        if (std::getline(in, input)) P = Polinomial(input);
-        return in;
-    }
+ private:
+  MyList data_;
+  void Simplify();
 };

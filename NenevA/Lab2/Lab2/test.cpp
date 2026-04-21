@@ -1,381 +1,404 @@
 #include "pch.h"
+#include <gtest/gtest.h>
 #include <iostream>
-#include "hashTable.h"
-#include "unorderedTable.h"
-#include "AVL_tree.h"
 #include <vector>
 #include <string>
 #include <fstream>
 #include <sstream>
 #include <algorithm>
-#include "Polinomial.h"
+#include "polinomial.h"
+#include "hash_table.h"
+#include "unordered_table.h"
+#include "avl_tree.h"
+
+// Polinomial craetion
+Polinomial CreatePolynomial1() {
+    return Polinomial("2 0 3 1 4 2"); 
+}
+
+Polinomial CreatePolynomial2() {
+    return Polinomial("1 0 2 1 3 2");
+}
+
+Polinomial CreatePolynomial3() {
+    return Polinomial("5 0 5 1 5 2");
+}
+
+// HashTable<Polinomial>
 TEST(HashTablePolinomialTest, EmplaceAndFind) {
-    Hash_Table<Polinomial> table(10);
+    HashTable<Polinomial> table(10);
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
 
-    table.emplace_back("key1", p1);
-    table.emplace_back("key2", p2);
+    table.EmplaceBack("key1", p1);
+    table.EmplaceBack("key2", p2);
 
-    Polinomial* result1 = table.find("key1");
-    Polinomial* result2 = table.find("key2");
-    Polinomial* result3 = table.find("key3"); // non-existing key
+    Polinomial* result1 = table.Find("key1");
+    Polinomial* result2 = table.Find("key2");
+    Polinomial* result3 = table.Find("key3");  // non-existing key
 
-    EXPECT_NE(result1, nullptr);
-    EXPECT_NE(result2, nullptr);
-    EXPECT_EQ(result3, nullptr);
+    ASSERT_NE(result1, nullptr);
+    ASSERT_NE(result2, nullptr);
+    ASSERT_EQ(result3, nullptr);
 
     EXPECT_EQ(*result1, p1);
     EXPECT_EQ(*result2, p2);
 }
 
 TEST(HashTablePolinomialTest, EmplaceReplace) {
-    Hash_Table<Polinomial> table(10);
+    HashTable<Polinomial> table(10);
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
 
-    table.emplace_back("key1", p1);
-    table.emplace_back("key1", p2); 
+    table.EmplaceBack("key1", p1);
+    table.EmplaceBack("key1", p2);
 
-    Polinomial* result = table.find("key1");
-    EXPECT_NE(result, nullptr);
-    EXPECT_EQ(*result, p2); 
+    Polinomial* result = table.Find("key1");
+    ASSERT_NE(result, nullptr);
+    EXPECT_EQ(*result, p2);
 }
 
 TEST(HashTablePolinomialTest, Erase) {
-    Hash_Table<Polinomial> table(10);
+    HashTable<Polinomial> table(10);
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    table.emplace_back("key1", p1);
-    EXPECT_NE(table.find("key1"), nullptr);
-    table.erase("key1");
-    EXPECT_EQ(table.find("key1"), nullptr);
+    Polinomial p1 = CreatePolynomial1();
+    table.EmplaceBack("key1", p1);
+
+    ASSERT_NE(table.Find("key1"), nullptr);
+
+    table.Erase("key1");
+
+    EXPECT_EQ(table.Find("key1"), nullptr);
 }
 
 TEST(HashTablePolinomialTest, MultipleOperations) {
-    Hash_Table<Polinomial> table(10);
+    HashTable<Polinomial> table(10);
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
-    Polinomial p3 = Polinomial("5 0 5 1 5 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
+    Polinomial p3 = CreatePolynomial3();
 
-    table.emplace_back("key1", p1);
-    table.emplace_back("key2", p2);
-    table.emplace_back("key3", p3);
+    table.EmplaceBack("key1", p1);
+    table.EmplaceBack("key2", p2);
+    table.EmplaceBack("key3", p3);
 
-    EXPECT_EQ(*table.find("key1"), p1);
-    EXPECT_EQ(*table.find("key2"), p2);
-    EXPECT_EQ(*table.find("key3"), p3);
+    EXPECT_EQ(*table.Find("key1"), p1);
+    EXPECT_EQ(*table.Find("key2"), p2);
+    EXPECT_EQ(*table.Find("key3"), p3);
 
-    table.erase("key2");
-    EXPECT_EQ(table.find("key2"), nullptr);
+    table.Erase("key2");
+    EXPECT_EQ(table.Find("key2"), nullptr);
 
-    EXPECT_EQ(*table.find("key1"), p1);
-    EXPECT_EQ(*table.find("key3"), p3);
+    EXPECT_EQ(*table.Find("key1"), p1);
+    EXPECT_EQ(*table.Find("key3"), p3);
 }
 
 TEST(HashTablePolinomialTest, Statistics) {
-    Hash_Table<Polinomial> table(10);
+    HashTable<Polinomial> table(10);
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    table.emplace_back("key1", p1);
-    table.find("key1");
-    table.erase("key1");
+    Polinomial p1 = CreatePolynomial1();
+    table.EmplaceBack("key1", p1);
+    table.Find("key1");
+    table.Erase("key1");
 
-    int operations = table.get_operation_number();
-    EXPECT_NE(operations, 0);
+    int operations = table.GetOperationNumber();
+    EXPECT_GT(operations, 0);
 
-    table.reset();
-    EXPECT_EQ(table.get_operation_number(), 0);
+    table.Reset();
+    EXPECT_EQ(table.GetOperationNumber(), 0);
 }
 
+// UnorderedTable<Polinomial>
 TEST(UnorderedTablePolinomialTest, EmplaceAndFind) {
-    Unordered_Table<Polinomial> table;
+    UnorderedTable<Polinomial> table;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
 
-    table.emplace_back("key1", p1);
-    table.emplace_back("key2", p2);
+    table.EmplaceBack("key1", p1);
+    table.EmplaceBack("key2", p2);
 
-    Polinomial* result1 = table.find("key1");
-    Polinomial* result2 = table.find("key2");
-    Polinomial* result3 = table.find("key3");
+    Polinomial* result1 = table.Find("key1");
+    Polinomial* result2 = table.Find("key2");
+    Polinomial* result3 = table.Find("key3");
 
-    EXPECT_NE(result1, nullptr);
-    EXPECT_NE(result2, nullptr);
-    EXPECT_EQ(result3, nullptr);
+    ASSERT_NE(result1, nullptr);
+    ASSERT_NE(result2, nullptr);
+    ASSERT_EQ(result3, nullptr);
 
     EXPECT_EQ(*result1, p1);
     EXPECT_EQ(*result2, p2);
 }
 
 TEST(UnorderedTablePolinomialTest, EmplaceReplace) {
-    Unordered_Table<Polinomial> table;
+    UnorderedTable<Polinomial> table;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
 
-    table.emplace_back("key1", p1);
-    table.emplace_back("key1", p2); 
+    table.EmplaceBack("key1", p1);
+    table.EmplaceBack("key1", p2);
 
-    Polinomial* result = table.find("key1");
-    EXPECT_NE(result, nullptr);
-    EXPECT_EQ(*result, p2); 
+    Polinomial* result = table.Find("key1");
+    ASSERT_NE(result, nullptr);
+    EXPECT_EQ(*result, p2);
 }
 
 TEST(UnorderedTablePolinomialTest, Erase) {
-    Unordered_Table<Polinomial> table;
+    UnorderedTable<Polinomial> table;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    table.emplace_back("key1", p1);
+    Polinomial p1 = CreatePolynomial1();
+    table.EmplaceBack("key1", p1);
 
-    EXPECT_NE(table.find("key1"), nullptr);
+    ASSERT_NE(table.Find("key1"), nullptr);
 
-    table.erase("key1");
+    table.Erase("key1");
 
-    EXPECT_EQ(table.find("key1"), nullptr);
+    EXPECT_EQ(table.Find("key1"), nullptr);
 }
 
 TEST(UnorderedTablePolinomialTest, MultipleOperations) {
-    Unordered_Table<Polinomial> table;
+    UnorderedTable<Polinomial> table;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
-    Polinomial p3 = Polinomial("5 0 5 1 5 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
+    Polinomial p3 = CreatePolynomial3();
 
-    table.emplace_back("key1", p1);
-    table.emplace_back("key2", p2);
-    table.emplace_back("key3", p3);
+    table.EmplaceBack("key1", p1);
+    table.EmplaceBack("key2", p2);
+    table.EmplaceBack("key3", p3);
 
-    EXPECT_EQ(*table.find("key1"), p1);
-    EXPECT_EQ(*table.find("key2"), p2);
-    EXPECT_EQ(*table.find("key3"), p3);
+    EXPECT_EQ(*table.Find("key1"), p1);
+    EXPECT_EQ(*table.Find("key2"), p2);
+    EXPECT_EQ(*table.Find("key3"), p3);
 
-    table.erase("key2");
-    EXPECT_EQ(table.find("key2"), nullptr);
+    table.Erase("key2");
+    EXPECT_EQ(table.Find("key2"), nullptr);
 
-    EXPECT_EQ(*table.find("key1"), p1);
-    EXPECT_EQ(*table.find("key3"), p3);
+    EXPECT_EQ(*table.Find("key1"), p1);
+    EXPECT_EQ(*table.Find("key3"), p3);
 }
 
 TEST(UnorderedTablePolinomialTest, Statistics) {
-    Unordered_Table<Polinomial> table;
+    UnorderedTable<Polinomial> table;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    table.emplace_back("key1", p1);
-    table.find("key1");
-    table.erase("key1");
+    Polinomial p1 = CreatePolynomial1();
+    table.EmplaceBack("key1", p1);
+    table.Find("key1");
+    table.Erase("key1");
 
-    int operations = table.get_operation_number();
+    int operations = table.GetOperationNumber();
     EXPECT_GT(operations, 0);
 
-    table.reset();
-    EXPECT_EQ(table.get_operation_number(), 0);
+    table.Reset();
+    EXPECT_EQ(table.GetOperationNumber(), 0);
 }
 
-TEST(AVLTreePolinomialTest, EmplaceAndFind) {
-    AVL_Tree<Polinomial> tree;
+// AvlTree<Polinomial>
+TEST(AvlTreePolinomialTest, EmplaceAndFind) {
+    AvlTree<Polinomial> tree;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
 
-    tree.emplace_back("key1", p1);
-    tree.emplace_back("key2", p2);
+    tree.EmplaceBack("key1", p1);
+    tree.EmplaceBack("key2", p2);
 
-    Polinomial* result1 = tree.find("key1");
-    Polinomial* result2 = tree.find("key2");
-    Polinomial* result3 = tree.find("key3");
+    Polinomial* result1 = tree.Find("key1");
+    Polinomial* result2 = tree.Find("key2");
+    Polinomial* result3 = tree.Find("key3");
 
-    EXPECT_NE(result1, nullptr);
-    EXPECT_NE(result2, nullptr);
-    EXPECT_EQ(result3, nullptr);
+    ASSERT_NE(result1, nullptr);
+    ASSERT_NE(result2, nullptr);
+    ASSERT_EQ(result3, nullptr);
 
     EXPECT_EQ(*result1, p1);
     EXPECT_EQ(*result2, p2);
 }
 
-TEST(AVLTreePolinomialTest, EmplaceReplace) {
-    AVL_Tree<Polinomial> tree;
+TEST(AvlTreePolinomialTest, EmplaceReplace) {
+    AvlTree<Polinomial> tree;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
 
-    tree.emplace_back("key1", p1);
-    tree.emplace_back("key1", p2); 
+    tree.EmplaceBack("key1", p1);
+    tree.EmplaceBack("key1", p2);
 
-    Polinomial* result = tree.find("key1");
-    EXPECT_NE(result, nullptr);
-    EXPECT_EQ(*result, p2); 
+    Polinomial* result = tree.Find("key1");
+    ASSERT_NE(result, nullptr);
+    EXPECT_EQ(*result, p2);
 }
 
-TEST(AVLTreePolinomialTest, Erase) {
-    AVL_Tree<Polinomial> tree;
+TEST(AvlTreePolinomialTest, Erase) {
+    AvlTree<Polinomial> tree;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    tree.emplace_back("key1", p1);
+    Polinomial p1 = CreatePolynomial1();
+    tree.EmplaceBack("key1", p1);
 
-    EXPECT_NE(tree.find("key1"), nullptr);
+    ASSERT_NE(tree.Find("key1"), nullptr);
 
-    tree.erase("key1");
+    tree.Erase("key1");
 
-    EXPECT_EQ(tree.find("key1"), nullptr);
+    EXPECT_EQ(tree.Find("key1"), nullptr);
 }
 
-TEST(AVLTreePolinomialTest, MultipleOperations) {
-    AVL_Tree<Polinomial> tree;
+TEST(AvlTreePolinomialTest, MultipleOperations) {
+    AvlTree<Polinomial> tree;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
-    Polinomial p3 = Polinomial("5 0 5 1 5 2");
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
+    Polinomial p3 = CreatePolynomial3();
 
-    tree.emplace_back("key1", p1);
-    tree.emplace_back("key2", p2);
-    tree.emplace_back("key3", p3);
+    tree.EmplaceBack("key1", p1);
+    tree.EmplaceBack("key2", p2);
+    tree.EmplaceBack("key3", p3);
 
-    EXPECT_EQ(*tree.find("key1"), p1);
-    EXPECT_EQ(*tree.find("key2"), p2);
-    EXPECT_EQ(*tree.find("key3"), p3);
+    EXPECT_EQ(*tree.Find("key1"), p1);
+    EXPECT_EQ(*tree.Find("key2"), p2);
+    EXPECT_EQ(*tree.Find("key3"), p3);
 
-    tree.erase("key2");
-    EXPECT_EQ(tree.find("key2"), nullptr);
+    tree.Erase("key2");
+    EXPECT_EQ(tree.Find("key2"), nullptr);
 
-    EXPECT_EQ(*tree.find("key1"), p1);
-    EXPECT_EQ(*tree.find("key3"), p3);
+    EXPECT_EQ(*tree.Find("key1"), p1);
+    EXPECT_EQ(*tree.Find("key3"), p3);
 }
 
-TEST(AVLTreePolinomialTest, Statistics) {
-    AVL_Tree<Polinomial> tree;
+TEST(AvlTreePolinomialTest, Statistics) {
+    AvlTree<Polinomial> tree;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    tree.emplace_back("key1", p1);
-    tree.find("key1");
-    tree.erase("key1");
+    Polinomial p1 = CreatePolynomial1();
+    tree.EmplaceBack("key1", p1);
+    tree.Find("key1");
+    tree.Erase("key1");
 
-    int operations = tree.get_operation_number();
-    EXPECT_NE(operations, 0);
+    int operations = tree.GetOperationNumber();
+    EXPECT_GT(operations, 0);
 
-    tree.reset();
-    EXPECT_EQ(tree.get_operation_number(), 0);
+    tree.Reset();
+    EXPECT_EQ(tree.GetOperationNumber(), 0);
 }
 
-TEST(AVLTreePolinomialTest, BalanceCheck) {
-    AVL_Tree<Polinomial> tree;
+TEST(AvlTreePolinomialTest, BalanceCheck) {
+    AvlTree<Polinomial> tree;
 
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    Polinomial p2 = Polinomial("1 0 2 1 3 2");
-    Polinomial p3 = Polinomial("5 0 5 1 5 2");
-    tree.emplace_back("key5", p1);
-    tree.emplace_back("key3", p2);
-    tree.emplace_back("key7", p3);
-    tree.emplace_back("key2", p1);
-    tree.emplace_back("key4", p2);
-    tree.emplace_back("key6", p3);
-    tree.emplace_back("key8", p1);
+    Polinomial p1 = CreatePolynomial1();
+    Polinomial p2 = CreatePolynomial2();
+    Polinomial p3 = CreatePolynomial3();
 
-    EXPECT_NE(tree.find("key5"), nullptr);
-    EXPECT_NE(tree.find("key3"), nullptr);
-    EXPECT_NE(tree.find("key7"), nullptr);
-    EXPECT_NE(tree.find("key2"), nullptr);
-    EXPECT_NE(tree.find("key4"), nullptr);
-    EXPECT_NE(tree.find("key6"), nullptr);
-    EXPECT_NE(tree.find("key8"), nullptr);
+    tree.EmplaceBack("key5", p1);
+    tree.EmplaceBack("key3", p2);
+    tree.EmplaceBack("key7", p3);
+    tree.EmplaceBack("key2", p1);
+    tree.EmplaceBack("key4", p2);
+    tree.EmplaceBack("key6", p3);
+    tree.EmplaceBack("key8", p1);
+
+    EXPECT_NE(tree.Find("key5"), nullptr);
+    EXPECT_NE(tree.Find("key3"), nullptr);
+    EXPECT_NE(tree.Find("key7"), nullptr);
+    EXPECT_NE(tree.Find("key2"), nullptr);
+    EXPECT_NE(tree.Find("key4"), nullptr);
+    EXPECT_NE(tree.Find("key6"), nullptr);
+    EXPECT_NE(tree.Find("key8"), nullptr);
 }
 
+// Specific tests
 TEST(HashTablePolinomialTest, EmptyTable) {
-    Hash_Table<Polinomial> table(10);
+    HashTable<Polinomial> table(10);
 
-    EXPECT_EQ(table.find("any_key"), nullptr);
-    EXPECT_NO_THROW(table.erase("any_key"));
+    EXPECT_EQ(table.Find("any_key"), nullptr);
+    EXPECT_NO_THROW(table.Erase("any_key"));
 }
 
 TEST(UnorderedTablePolinomialTest, EmptyTable) {
-    Unordered_Table<Polinomial> table;
+    UnorderedTable<Polinomial> table;
 
-    EXPECT_EQ(table.find("any_key"), nullptr);
-    EXPECT_NO_THROW(table.erase("any_key"));
+    EXPECT_EQ(table.Find("any_key"), nullptr);
+    EXPECT_NO_THROW(table.Erase("any_key"));
 }
 
-TEST(AVLTreePolinomialTest, EmptyTree) {
-    AVL_Tree<Polinomial> tree;
+TEST(AvlTreePolinomialTest, EmptyTree) {
+    AvlTree<Polinomial> tree;
 
-    EXPECT_EQ(tree.find("any_key"), nullptr);
-    EXPECT_NO_THROW(tree.erase("any_key"));
+    EXPECT_EQ(tree.Find("any_key"), nullptr);
+    EXPECT_NO_THROW(tree.Erase("any_key"));
 }
 
 TEST(HashTablePolinomialTest, CopyConstructor) {
-    Hash_Table<Polinomial> table1(10);
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    table1.emplace_back("key1", p1);
+    HashTable<Polinomial> table1(10);
+    Polinomial p1 = CreatePolynomial1();
+    table1.EmplaceBack("key1", p1);
 
-    Hash_Table<Polinomial> table2(table1);
+    HashTable<Polinomial> table2(table1);
 
-    Polinomial* result = table2.find("key1");
-    EXPECT_NE(result, nullptr);
+    Polinomial* result = table2.Find("key1");
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(*result, p1);
 }
 
 TEST(UnorderedTablePolinomialTest, CopyConstructor) {
-    Unordered_Table<Polinomial> table1;
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    table1.emplace_back("key1", p1);
+    UnorderedTable<Polinomial> table1;
+    Polinomial p1 = CreatePolynomial1();
+    table1.EmplaceBack("key1", p1);
 
-    Unordered_Table<Polinomial> table2(table1);
+    UnorderedTable<Polinomial> table2(table1);
 
-    Polinomial* result = table2.find("key1");
-    EXPECT_NE(result, nullptr);
+    Polinomial* result = table2.Find("key1");
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(*result, p1);
 }
 
-TEST(AVLTreePolinomialTest, CopyConstructor) {
-    AVL_Tree<Polinomial> tree1;
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    tree1.emplace_back("key1", p1);
+TEST(AvlTreePolinomialTest, CopyConstructor) {
+    AvlTree<Polinomial> tree1;
+    Polinomial p1 = CreatePolynomial1();
+    tree1.EmplaceBack("key1", p1);
 
-    AVL_Tree<Polinomial> tree2(tree1);
+    AvlTree<Polinomial> tree2(tree1);
 
-    Polinomial* result = tree2.find("key1");
-    EXPECT_NE(result, nullptr);
+    Polinomial* result = tree2.Find("key1");
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(*result, p1);
 }
 
 TEST(HashTablePolinomialTest, AssignmentOperator) {
-    Hash_Table<Polinomial> table1(10);
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    table1.emplace_back("key1", p1);
+    HashTable<Polinomial> table1(10);
+    Polinomial p1 = CreatePolynomial1();
+    table1.EmplaceBack("key1", p1);
 
-    Hash_Table<Polinomial> table2(10);
+    HashTable<Polinomial> table2(10);
     table2 = table1;
 
-    Polinomial* result = table2.find("key1");
-    EXPECT_NE(result, nullptr);
+    Polinomial* result = table2.Find("key1");
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(*result, p1);
 }
 
 TEST(UnorderedTablePolinomialTest, AssignmentOperator) {
-    Unordered_Table<Polinomial> table1;
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    table1.emplace_back("key1", p1);
+    UnorderedTable<Polinomial> table1;
+    Polinomial p1 = CreatePolynomial1();
+    table1.EmplaceBack("key1", p1);
 
-    Unordered_Table<Polinomial> table2;
+    UnorderedTable<Polinomial> table2;
     table2 = table1;
 
-    Polinomial* result = table2.find("key1");
-    EXPECT_NE(result, nullptr);
+    Polinomial* result = table2.Find("key1");
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(*result, p1);
 }
 
-TEST(AVLTreePolinomialTest, AssignmentOperator) {
-    AVL_Tree<Polinomial> tree1;
-    Polinomial p1 = Polinomial("2 0 3 1 4 2");
-    tree1.emplace_back("key1", p1);
+TEST(AvlTreePolinomialTest, AssignmentOperator) {
+    AvlTree<Polinomial> tree1;
+    Polinomial p1 = CreatePolynomial1();
+    tree1.EmplaceBack("key1", p1);
 
-    AVL_Tree<Polinomial> tree2;
+    AvlTree<Polinomial> tree2;
     tree2 = tree1;
 
-    Polinomial* result = tree2.find("key1");
-    EXPECT_NE(result, nullptr);
+    Polinomial* result = tree2.Find("key1");
+    ASSERT_NE(result, nullptr);
     EXPECT_EQ(*result, p1);
 }

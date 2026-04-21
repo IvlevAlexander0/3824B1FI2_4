@@ -23,13 +23,13 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hashTable.h">
+    <ClInclude Include="hash_table.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="unorderedTable.h">
+    <ClInclude Include="unordered_table.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="AVL_tree.h">
+    <ClInclude Include="avl_tree.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="Polinomial.h">

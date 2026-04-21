@@ -1,91 +1,62 @@
 #include "Polinomial.h"
+MyList::MyList() : head_(nullptr), tail_(nullptr), size_(0) {}
 
-//iterator
-my_list::iterator::iterator(Node* ptr) : current_node(ptr) {}
-Monomial& my_list::iterator::operator*() const { return current_node->Elem; }
+MyList::~MyList() { clear(); }
 
-Monomial* my_list::iterator::operator->() const { return &(current_node->Elem); }
-my_list::iterator& my_list::iterator::operator++() {
-    if (current_node) current_node = current_node->next;
-    return *this;
+MyList::MyList(const MyList& other) : head_(nullptr), tail_(nullptr), size_(0) {
+    for (const Monomial& m : other) EmplaceBack(m);
 }
-bool my_list::iterator::operator==(const iterator& other) const { return current_node == other.current_node; }
-bool my_list::iterator::operator!=(const iterator& other) const { return current_node != other.current_node; }
 
-
-
-
-
-//const_iterator
-my_list::const_iterator::const_iterator(const Node* ptr) : current_node(ptr) {}
-const Monomial& my_list::const_iterator::operator*() const { return current_node->Elem; }
-const Monomial* my_list::const_iterator::operator->() const { return &(current_node->Elem); }
-my_list::const_iterator& my_list::const_iterator::operator++() {
-    if (current_node) current_node = current_node->next;
+MyList& MyList::operator=(MyList other) {
+    std::swap(head_, other.head_);
+    std::swap(tail_, other.tail_);
+    std::swap(size_, other.size_);
     return *this;
 }
 
-bool my_list::const_iterator::operator==(const const_iterator& other) const { return current_node == other.current_node; }
+bool MyList::empty() const { return head_ == nullptr; }
 
-bool my_list::const_iterator::operator!=(const const_iterator& other) const { return current_node != other.current_node; }
+size_t MyList::size() const { return size_; }
 
-
-
-
-
-//my_list
-my_list::my_list() : head(nullptr), tail(nullptr), _size(0) {};
-my_list::~my_list() { clear(); }
-
-my_list::my_list(const my_list& other) : head(nullptr), tail(nullptr), _size(0) {
-    for (const Monomial& m : other) emplace_back(m);
-}
-
-my_list& my_list::operator=(my_list other) {
-    std::swap(head, other.head);
-    std::swap(tail, other.tail);
-    std::swap(_size, other._size);
-    return *this;
-}
-bool my_list::empty() const { return head == nullptr; }
-std::size_t my_list::size() const { return _size; }
-void my_list::clear() {
-    Node* current = head;
+void MyList::clear() {
+    Node* current = head_;
     while (current != nullptr) {
         Node* next_node = current->next;
         delete current;
         current = next_node;
     }
-    head = nullptr;
-    tail = nullptr;
-    _size = 0;
-}
-void my_list::emplace_back(Monomial M) {
-    Node* p = new Node(M);
-    if (empty()) {
-        head = p;
-        tail = p;
-    }
-    else {
-        tail->next = p;
-        tail = p;
-    }
-    _size++;
-}
-void my_list::emplace_back(double c, int d) {
-    emplace_back(Monomial(c, d));
+    head_ = nullptr;
+    tail_ = nullptr;
+    size_ = 0;
 }
 
-void my_list::sort() {
-    if (empty() || head == tail) return;
+void MyList::EmplaceBack(const Monomial& m) {
+    Node* p = new Node(m);
+    if (empty()) {
+        head_ = p;
+        tail_ = p;
+    }
+    else {
+        tail_->next = p;
+        tail_ = p;
+    }
+    size_++;
+}
+
+void MyList::EmplaceBack(double c, int d) {
+    EmplaceBack(Monomial(c, d));
+}
+
+void MyList::Sort() {
+    if (empty() || head_ == tail_) return;
     bool swapped;
     Node* end_ptr = nullptr;
     do {
         swapped = false;
-        Node* current = head;
+        Node* current = head_;
         while (current->next != end_ptr) {
-            if (current->next->Elem < current->Elem) {
-                std::swap(current->Elem, current->next->Elem);
+            if (current->next->elem < current->elem) {
+                std::swap(current->elem, current->next->elem);
                 swapped = true;
             }
             current = current->next;
@@ -94,82 +65,75 @@ void my_list::sort() {
     } while (swapped);
 }
 
-my_list::iterator my_list::begin() { return iterator(head); }
-my_list::iterator my_list::end() { return iterator(nullptr); }
-
-my_list::const_iterator my_list::begin() const { return const_iterator(head); }
-my_list::const_iterator my_list::end() const { return const_iterator(nullptr); }
-
-
-
-
-
-//polinomial
-void Polinomial::simplify() {
-    if (Data.empty()) return;
-    Data.sort();
-    my_list newData;
-    auto it = Data.begin();
-    while (it != Data.end()) {
-        double currentCoeff = it->Coefficient;
-        int currentDegree = it->Degrees;
+void Polinomial::Simplify() {
+    if (data_.empty()) return;
+    data_.Sort();
+    MyList new_data;
+    auto it = data_.begin();
+    while (it != data_.end()) {
+        double current_coeff = it->coefficient;
+        int current_degree = it->degrees;
         ++it;
-        while (it != Data.end() && it->Degrees == currentDegree) {
-            currentCoeff += it->Coefficient;
+        while (it != data_.end() && it->degrees == current_degree) {
+            current_coeff += it->coefficient;
             ++it;
         }
-        if (std::fabs(currentCoeff) > 0.000001) {
-            newData.emplace_back(currentCoeff, currentDegree);
+        if (std::fabs(current_coeff) > 0.000001) {
+            new_data.EmplaceBack(current_coeff, current_degree);
         }
     }
-    Data = newData;
+    data_ = new_data;
 }
 
 Polinomial::Polinomial(const Polinomial& other) {
-    for (auto it = other.Data.begin(); it != other.Data.end(); ++it) Data.emplace_back(*it);
+    for (auto it = other.data_.begin(); it != other.data_.end(); ++it) {
+        data_.EmplaceBack(*it);
+    }
 }
 
-Polinomial::Polinomial(const std::string s) {
+Polinomial::Polinomial(const std::string& s) {
     std::istringstream iss(s);
     double coeff;
     int degree;
-    std::vector<Monomial> tempMonomials;
+    std::vector<Monomial> temp_monomials;
     while (iss >> coeff >> degree) {
-        if (degree > 999 || degree < 0) throw std::runtime_error("Such values of degrees are not supported");
-        if (coeff) tempMonomials.emplace_back(coeff, degree);
+        if (degree > 999 || degree < 0) {
+            throw std::runtime_error("Such values of degrees are not supported");
+        }
+        if (coeff) temp_monomials.emplace_back(coeff, degree);
     }
 
-    if (!tempMonomials.empty()) {
-        std::sort(tempMonomials.begin(), tempMonomials.end());
-        if (!tempMonomials.empty()) {
-            for (size_t i = 0; i < tempMonomials.size(); ++i) Data.emplace_back(tempMonomials[i]);
+    if (!temp_monomials.empty()) {
+        std::sort(temp_monomials.begin(), temp_monomials.end());
+        for (const auto& m : temp_monomials) {
+            data_.EmplaceBack(m);
         }
     }
-    simplify();
+    Simplify();
 }
 
 bool Polinomial::operator==(const Polinomial& other) const {
-    if (Data.size() != other.Data.size()) return 0;
-    auto it1 = Data.begin();
-    auto it2 = other.Data.begin();
-    while (it1 != Data.end()) {
+    if (data_.size() != other.data_.size()) return false;
+    auto it1 = data_.begin();
+    auto it2 = other.data_.begin();
+    while (it1 != data_.end()) {
         if (!(*it1 == *it2)) {
             return false;
         }
         ++it1;
         ++it2;
     }
-    return 1;
+    return true;
 }
 
 bool Polinomial::operator!=(const Polinomial& other) const {
     return !(*this == other);
 }
 
-Polinomial& Polinomial:: operator=(const Polinomial& other) {
+Polinomial& Polinomial::operator=(const Polinomial& other) {
     if (*this == other) return *this;
     Polinomial temp(other);
-    std::swap(Data, temp.Data);
+    std::swap(data_, temp.data_);
     return *this;
 }
 
@@ -177,21 +141,22 @@ Polinomial Polinomial::operator+(const Polinomial& other) const {
     Polinomial result;
     std::vector<Monomial> temp1, temp2;
 
-    for (auto& it : this->Data) temp1.emplace_back(it);
-    for (auto& it : other.Data) temp2.emplace_back(it);
+    for (auto& it : this->data_) temp1.emplace_back(it);
+    for (auto& it : other.data_) temp2.emplace_back(it);
 
-    std::vector<Monomial> Res(temp1.size() + temp2.size());
-    std::merge(temp1.begin(), temp1.end(), temp2.begin(), temp2.end(), Res.begin());
+    std::vector<Monomial> res(temp1.size() + temp2.size());
+    std::merge(temp1.begin(), temp1.end(), temp2.begin(), temp2.end(),
+        res.begin());
 
-    for (auto& i : Res) result.Data.emplace_back(i);
+    for (auto& i : res) result.data_.EmplaceBack(i);
 
-    result.simplify();
+    result.Simplify();
     return result;
 }
 
 Polinomial Polinomial::operator-(const Polinomial& other) const {
-    Polinomial M(other), result = *this;
-    result = result + M * -1;
+    Polinomial m(other), result = *this;
+    result = result + m * -1;
     return result;
 }
 
@@ -199,32 +164,88 @@ Polinomial Polinomial::operator*(const Polinomial& other) const {
     Polinomial result;
     std::vector<Monomial> temp1, temp2, res;
 
-    for (auto& elem : this->Data) temp1.emplace_back(elem);
-    for (auto& elem : other.Data) temp2.emplace_back(elem);
+    for (auto& elem : this->data_) temp1.emplace_back(elem);
+    for (auto& elem : other.data_) temp2.emplace_back(elem);
 
     for (auto& elem1 : temp1) {
         for (auto& elem2 : temp2) {
-            int X = elem1.Degrees / 100 + elem2.Degrees / 100;
-            int Z = elem1.Degrees % 10 + elem2.Degrees % 10;
-            int Y = (elem1.Degrees + elem2.Degrees - Z - 100 * X) / 10;
-            if (X > 9 || Y > 9 || Z > 9) {
-                //cout << X << " " << Y << " " << Z << " ";
+            int x = elem1.degrees / 100 + elem2.degrees / 100;
+            int z = elem1.degrees % 10 + elem2.degrees % 10;
+            int y = (elem1.degrees + elem2.degrees - z - 100 * x) / 10;
+            if (x > 9 || y > 9 || z > 9) {
                 throw std::runtime_error("Degrees over 9 aren't allowed");
             }
-            int NewDegree = Z + Y * 10 + 100 * X;
-            double NewCoeff = elem1.Coefficient * elem2.Coefficient;
-            res.emplace_back(NewCoeff, NewDegree);
+            int new_degree = z + y * 10 + 100 * x;
+            double new_coeff = elem1.coefficient * elem2.coefficient;
+            res.emplace_back(new_coeff, new_degree);
         }
     }
 
-    for (auto& elem : res) result.Data.emplace_back(elem);
+    for (auto& elem : res) result.data_.EmplaceBack(elem);
 
-    result.simplify();
+    result.Simplify();
     return result;
 }
 
-Polinomial Polinomial::operator*(const double Mult) {
+Polinomial Polinomial::operator*(double mult) const {
     Polinomial result(*this);
-    for (auto& elem : result.Data) elem.Coefficient *= Mult;
+    for (auto& elem : result.data_) elem.coefficient *= mult;
     return result;
+}
+
+std::ostream& operator<<(std::ostream& out, const Polinomial& p) {
+    if (p.data_.empty()) return out << "0";
+    bool first_term = true;
+
+    for (auto it = p.data_.begin(); it != p.data_.end(); ++it) {
+        const Monomial& m = *it;
+        if (std::fabs(m.coefficient) < 0.000001) {
+            continue;
+        }
+        if (!first_term) {
+            if (m.coefficient > 0) {
+                out << " + ";
+            }
+            else {
+                out << " - ";
+            }
+        }
+        else if (m.coefficient < 0) {
+            out << "-";
+        }
+        double abs_coeff = std::fabs(m.coefficient);
+        if (m.degrees == 0 || std::fabs(abs_coeff - 1.0) > 0.000001) {
+            out << abs_coeff;
+        }
+        int deg_x = m.degrees / 100;
+        int deg_y = (m.degrees / 10) % 10;
+        int deg_z = m.degrees % 10;
+        bool has_variable = false;
+
+        if (deg_x > 0) {
+            out << "x";
+            if (deg_x > 1) out << "^" << deg_x;
+            has_variable = true;
+        }
+        if (deg_y > 0) {
+            if (has_variable) out << " ";
+            out << "y";
+            if (deg_y > 1) out << "^" << deg_y;
+            has_variable = true;
+        }
+        if (deg_z > 0) {
+            if (has_variable) out << " ";
+            out << "z";
+            if (deg_z > 1) out << "^" << deg_z;
+            has_variable = true;
+        }
+        first_term = false;
+    }
+    return out;
+}
+
+std::istream& operator>>(std::istream& in, Polinomial& p) {
+    std::string input;
+    if (std::getline(in, input)) p = Polinomial(input);
+    return in;
 }

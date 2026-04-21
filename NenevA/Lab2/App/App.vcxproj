@@ -127,11 +127,11 @@
     <ClCompile Include="Polinomial.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="AVL_tree.h" />
-    <ClInclude Include="hashTable.h" />
+    <ClInclude Include="avl_tree.h" />
+    <ClInclude Include="hash_table.h" />
     <ClInclude Include="Polinomial.h" />
     <ClInclude Include="Table_Manager.h" />
-    <ClInclude Include="unorderedTable.h" />
+    <ClInclude Include="unordered_table.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
