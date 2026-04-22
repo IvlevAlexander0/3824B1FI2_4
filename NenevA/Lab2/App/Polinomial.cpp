@@ -65,6 +65,7 @@ void MyList::Sort() {
     } while (swapped);
 }
 
+
 void Polinomial::Simplify() {
     if (data_.empty()) return;
     data_.Sort();

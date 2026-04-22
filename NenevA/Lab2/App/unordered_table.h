@@ -65,14 +65,15 @@ void UnorderedTable<ValType>::EmplaceBack(const std::string& key,
 
 template <typename ValType>
 void UnorderedTable<ValType>::Erase(const std::string& key) {
-  for (auto it = data_.begin(); it != data_.end(); ++it) {
-	unordered_counters_++;
-    if (it->key == key) {
-      data_.erase(it);
-	  unordered_counters_++;
-      return;
+    for (auto it = data_.begin(); it != data_.end(); ++it) {
+        unordered_counters_++;
+        if (it->key == key) { // Deleted element gets replaced by the last as order isn't important
+            *it = std::move(data_.back());
+            data_.pop_back();
+            unordered_counters_+=3;
+            return;
+        }
     }
-  }
 }
 
 template <typename ValType>

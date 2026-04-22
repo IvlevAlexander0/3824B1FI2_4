@@ -402,3 +402,229 @@ TEST(AvlTreePolinomialTest, AssignmentOperator) {
     ASSERT_NE(result, nullptr);
     EXPECT_EQ(*result, p1);
 }
+
+//Experiments
+std::string GenerateRandomPolynomial() {
+    std::string poly_str = "";
+    for (int j = 0; j < 3; ++j) {
+        int coeff = rand() % 100 + 1;
+        int degree = rand() % 10;
+        poly_str += std::to_string(coeff) + " " + std::to_string(degree) + " ";
+    }
+    return poly_str;
+}
+
+TEST(HashTablePolinomialExperiment, Insert10000Polynomials) {
+    HashTable<Polinomial> table(10007);
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        table.EmplaceBack(key, p);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (table.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 10000);
+}
+
+TEST(HashTablePolinomialExperiment, Search10000Polynomials) {
+    HashTable<Polinomial> table(10007);
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        table.EmplaceBack(key, p);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (table.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 10000);
+}
+
+TEST(HashTablePolinomialExperiment, Erase10000Polynomials) {
+    HashTable<Polinomial> table(10007);
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        table.EmplaceBack(key, p);
+    }
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        table.Erase(key);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (table.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 0);
+}
+
+
+TEST(UnorderedTablePolinomialExperiment, Insert10000Polynomials) {
+    UnorderedTable<Polinomial> table;
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        table.EmplaceBack(key, p);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (table.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 10000);
+}
+
+TEST(UnorderedTablePolinomialExperiment, Search10000Polynomials) {
+    UnorderedTable<Polinomial> table;
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        table.EmplaceBack(key, p);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (table.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 10000);
+}
+
+TEST(UnorderedTablePolinomialExperiment, Erase10000Polynomials) {
+    UnorderedTable<Polinomial> table;
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        table.EmplaceBack(key, p);
+    }
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        table.Erase(key);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (table.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 0);
+}
+
+
+TEST(AvlTreePolinomialExperiment, Insert10000Polynomials) {
+    AvlTree<Polinomial> tree;
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        tree.EmplaceBack(key, p);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (tree.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 10000);
+}
+
+TEST(AvlTreePolinomialExperiment, Search10000Polynomials) {
+    AvlTree<Polinomial> tree;
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        tree.EmplaceBack(key, p);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (tree.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 10000);
+}
+
+TEST(AvlTreePolinomialExperiment, Erase10000Polynomials) {
+    AvlTree<Polinomial> tree;
+    srand(time(nullptr));
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        std::string poly_str = GenerateRandomPolynomial();
+        Polinomial p(poly_str);
+        tree.EmplaceBack(key, p);
+    }
+
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        tree.Erase(key);
+    }
+
+    int found_count = 0;
+    for (int i = 0; i < 10000; ++i) {
+        std::string key = "poly" + std::to_string(i);
+        if (tree.Find(key) != nullptr) {
+            found_count++;
+        }
+    }
+
+    EXPECT_EQ(found_count, 0);
+}
