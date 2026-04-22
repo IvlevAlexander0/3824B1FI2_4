@@ -1,0 +1,56 @@
+ Session started 
+HashTable: emplace(first, x^2 - 5x + 6) [operations: 21]
+UnorderedTable: emplace(first, x^2 - 5x + 6) [operations: 0]
+AvlTree: emplace(first, x^2 - 5x + 6) [operations: 3]
+HashTable: emplace(second, x^2 + 4x + 4) [operations: 46]
+UnorderedTable: emplace(second, x^2 + 4x + 4) [operations: 1]
+AvlTree: emplace(second, x^2 + 4x + 4) [operations: 24]
+HashTable: emplace(third, x^3 + 3x^2 + 3x + 1) [operations: 67]
+UnorderedTable: emplace(third, x^3 + 3x^2 + 3x + 1) [operations: 3]
+AvlTree: emplace(third, x^3 + 3x^2 + 3x + 1) [operations: 77]
+HashTable: emplace(forth, 5x^2 + 4x y z) [operations: 88]
+UnorderedTable: emplace(forth, 5x^2 + 4x y z) [operations: 6]
+AvlTree: emplace(forth, 5x^2 + 4x y z) [operations: 116]
+HashTable: print() [operations: 88]
+UnorderedTable: print() [operations: 6]
+AvlTree: print() [operations: 116]
+ Statistics 
+HashTable: total=88
+UnorderedTable: total=6
+AvlTree: total=116
+HashTable: emplace(fifth, 5x^4 + 4x^3 y z + 20x^3 + 16x^2 y z + 20x^2 + 16x y z) [operations: 153]
+UnorderedTable: emplace(fifth, 5x^4 + 4x^3 y z + 20x^3 + 16x^2 y z + 20x^2 + 16x y z) [operations: 18]
+AvlTree: emplace(fifth, 5x^4 + 4x^3 y z + 20x^3 + 16x^2 y z + 20x^2 + 16x y z) [operations: 174]
+HashTable: emplace(sixth, 10x^3 y^5 + x^2 + 8x y z + 2x + 6) [operations: 196]
+UnorderedTable: emplace(sixth, 10x^3 y^5 + x^2 + 8x y z + 2x + 6) [operations: 25]
+AvlTree: emplace(sixth, 10x^3 y^5 + x^2 + 8x y z + 2x + 6) [operations: 222]
+HashTable: erase(second) [operations: 222]
+UnorderedTable: erase(second) [operations: 28]
+AvlTree: erase(second) [operations: 267]
+HashTable: print() [operations: 222]
+UnorderedTable: print() [operations: 28]
+AvlTree: print() [operations: 267]
+ Statistics 
+HashTable: total=222
+UnorderedTable: total=28
+AvlTree: total=267
+ Final Statistics 
+HashTable:
+  emplace: 6 times
+  erase: 1 times
+  find: 0 times
+  print: 2 times
+  Total operations: 222
+UnorderedTable:
+  emplace: 6 times
+  erase: 1 times
+  find: 0 times
+  print: 2 times
+  Total operations: 28
+AvlTree:
+  emplace: 6 times
+  erase: 1 times
+  find: 0 times
+  print: 2 times
+  Total operations: 267
+ Session ended 
